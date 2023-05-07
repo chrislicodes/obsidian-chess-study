@@ -2,11 +2,13 @@ import { PluginSettingTab, App, Setting } from "obsidian";
 import ChessifyPlugin from "src/main";
 
 export interface ChessifyPluginSettings {
-	defaultOrientation: "white" | "black";
+	boardOrientation: "white" | "black";
+	boardColor: "green" | "brown";
 }
 
 export const DEFAULT_SETTINGS: ChessifyPluginSettings = {
-	defaultOrientation: "white",
+	boardOrientation: "white",
+	boardColor: "green",
 };
 
 export class SettingsTab extends PluginSettingTab {
@@ -25,17 +27,35 @@ export class SettingsTab extends PluginSettingTab {
 		containerEl.createEl("h2", { text: "Obsidian Chessify Settings" });
 
 		new Setting(containerEl)
-			.setName("Orientation")
+			.setName("Board Orientation")
 			.setDesc("Sets the default orientation of the board")
 			.addDropdown((dropdown) => {
 				dropdown.addOption("white", "White");
 				dropdown.addOption("black", "Black");
 
 				dropdown
-					.setValue(this.plugin.settings.defaultOrientation)
+					.setValue(this.plugin.settings.boardOrientation)
 					.onChange((orientation) => {
-						this.plugin.settings.defaultOrientation =
-							orientation as "white" | "black";
+						this.plugin.settings.boardOrientation = orientation as
+							| "white"
+							| "black";
+						this.plugin.saveSettings();
+					});
+			});
+
+		new Setting(containerEl)
+			.setName("Board Color")
+			.setDesc("Sets the default color of the board")
+			.addDropdown((dropdown) => {
+				dropdown.addOption("green", "Green");
+				dropdown.addOption("brown", "Brown");
+
+				dropdown
+					.setValue(this.plugin.settings.boardColor)
+					.onChange((boardColor) => {
+						this.plugin.settings.boardColor = boardColor as
+							| "green"
+							| "brown";
 						this.plugin.saveSettings();
 					});
 			});

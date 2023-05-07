@@ -3,19 +3,28 @@ import {
 	ChessifyPluginSettings,
 	DEFAULT_SETTINGS,
 	SettingsTab,
-} from "./obsidian-components/SettingsTab";
+} from "./components/obsidian/SettingsTab";
 import * as ReactDOM from "react-dom/client";
 import * as React from "react";
-import { Chessify } from "./react-components/Chessify";
+import { Chessify } from "./components/react/Chessify";
+
+// these styles must be imported somewhere
+import "chessground/assets/chessground.base.css";
+import "chessground/assets/chessground.brown.css";
+import "chessground/assets/chessground.cburnett.css";
+import "assets/board/green.css";
 
 export default class ChessifyPlugin extends Plugin {
 	settings: ChessifyPluginSettings;
 
 	async onload() {
-		// Load the Settings
+		// Load the settings
 		await this.loadSettings();
+
+		// Add settings tab
 		this.addSettingTab(new SettingsTab(this.app, this));
 
+		// Add chessify code block processor
 		this.registerMarkdownCodeBlockProcessor(
 			"chessify",
 			(source, el, ctx) => {
@@ -70,7 +79,7 @@ class ReactView extends MarkdownRenderChild {
 				<Chessify
 					source={this.source}
 					app={this.app}
-					settings={this.settings}
+					pluginSettings={this.settings}
 				/>
 			</React.StrictMode>
 		);
