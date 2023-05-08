@@ -13,14 +13,17 @@ interface AppProps {
 }
 
 export const Chessify = ({ source, pluginSettings }: AppProps) => {
-	const config = parseUserConfig(pluginSettings, source);
+	const { fen, boardColor, boardOrientation } = parseUserConfig(
+		pluginSettings,
+		source
+	);
 
 	return (
 		<ChessgroundWrapper
-			boardColor={config.boardColor}
+			boardColor={boardColor}
 			config={{
-				fen: config.fen,
-				orientation: config.boardOrientation,
+				fen: fen,
+				orientation: boardOrientation,
 			}}
 		/>
 	);

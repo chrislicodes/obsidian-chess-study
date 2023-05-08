@@ -4,6 +4,8 @@ import { Chessground as ChessgroundApi } from "chessground";
 
 import { Api } from "chessground/api";
 import { Config } from "chessground/config";
+import { Chess } from "chess.js";
+import { playOtherSide, toColor, toDests } from "src/utils";
 
 export interface ChessGroundSettings {
 	config?: Config;
@@ -15,25 +17,47 @@ export function ChessgroundWrapper({
 	config = {},
 }: ChessGroundSettings) {
 	const [api, setApi] = useState<Api | null>(null);
+	const [chess, setChess] = useState<Chess | null>(null);
 
 	const ref = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
-		if (ref && ref.current && !api) {
-			//Render the Chessboard
+		if (ref.current && !api) {
+			const chess = config.fen?.length
+				? new Chess(config.fen)
+				: new Chess();
 			const chessgroundApi = ChessgroundApi(ref.current, {
 				animation: { enabled: true, duration: 100 },
+				movable: {
+					free: false,
+					color: toColor(chess),
+					dests: toDests(chess),
+				},
+				highlight: {
+					check: true,
+				},
+				turnColor: toColor(chess),
 				...config,
 			});
 
+			chessgroundApi.set({
+				movable: {
+					events: { after: playOtherSide(chessgroundApi, chess) },
+				},
+			});
+
 			setApi(chessgroundApi);
-		} else if (ref && ref.current && api) {
+			setChess(chess);
+		} else if (ref.current && api) {
 			api.set(config);
 		}
-	}, [ref]);
+	}, [ref, chess]);
 
 	useEffect(() => {
 		api?.set(config);
+		if (config.fen?.length) {
+			chess?.load(config.fen);
+		}
 	}, [api, config]);
 
 	return (
