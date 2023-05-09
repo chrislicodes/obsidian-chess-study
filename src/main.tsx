@@ -1,36 +1,116 @@
-import { App, MarkdownRenderChild, Plugin } from "obsidian";
+import { Chess } from "chess.js";
+import { Editor, Notice, Plugin } from "obsidian";
+import { ReactView } from "./components/ReactView";
+import { PgnModal } from "./components/obsidian/PgnModal";
 import {
 	ChessifyPluginSettings,
 	DEFAULT_SETTINGS,
 	SettingsTab,
 } from "./components/obsidian/SettingsTab";
-import * as ReactDOM from "react-dom/client";
-import * as React from "react";
-import { Chessify } from "./components/react/Chessify";
+import {
+	ChessifyDataAdapter,
+	ChessifyFileData,
+	parseUserConfig,
+} from "./utils";
 
 // these styles must be imported somewhere
+import "assets/board/green.css";
 import "chessground/assets/chessground.base.css";
 import "chessground/assets/chessground.brown.css";
 import "chessground/assets/chessground.cburnett.css";
-import "assets/board/green.css";
+import "../reset.css";
+import "./main.css";
 
 export default class ChessifyPlugin extends Plugin {
 	settings: ChessifyPluginSettings;
+	dataAdapter: ChessifyDataAdapter;
+	storagePath = `${this.app.vault.configDir}/plugins/${this.manifest.id}/storage/`;
 
 	async onload() {
-		// Load the settings
+		// Load Settings
 		await this.loadSettings();
+
+		// Register Data Adapter
+		this.dataAdapter = new ChessifyDataAdapter(
+			this.app.vault.adapter,
+			this.storagePath
+		);
 
 		// Add settings tab
 		this.addSettingTab(new SettingsTab(this.app, this));
 
+		// Add command
+		this.addCommand({
+			id: "insert-chesser",
+			name: "Insert PGN-Editor at cursor position",
+			editorCallback: (editor: Editor) => {
+				const cursorPosition = editor.getCursor();
+
+				const onSubmit = async (pgn: string) => {
+					try {
+						const chess = new Chess();
+
+						if (pgn) {
+							//Try to parse the PGN
+							chess.loadPgn(pgn, {
+								strict: false,
+							});
+						}
+
+						const chessifyFileData: ChessifyFileData = {
+							header: {
+								title: chess.header()["opening"] || null,
+							},
+							moves: chess
+								.history({ verbose: true })
+								.map((move) => ({
+									...move,
+									subMoves: [],
+									shapes: [],
+								})),
+						};
+
+						const id = await this.dataAdapter.saveFile(
+							chessifyFileData
+						);
+
+						editor.replaceRange(
+							`\`\`\`chessify\nchessifyId: ${id}\n\`\`\``,
+							cursorPosition
+						);
+					} catch (e) {
+						new Notice("There was an error during PGN parsing.", 0);
+					}
+				};
+
+				new PgnModal(this.app, onSubmit).open();
+			},
+		});
+
 		// Add chessify code block processor
 		this.registerMarkdownCodeBlockProcessor(
 			"chessify",
-			(source, el, ctx) => {
-				ctx.addChild(
-					new ReactView(el, source, this.app, this.settings)
-				);
+			async (source, el, ctx) => {
+				const { chessifyId } = parseUserConfig(this.settings, source);
+
+				if (!chessifyId.trim().length)
+					return new Notice(
+						"No chessifyId parameter found, please add one manually if the file already exists or add it via the 'Insert PGN-Editor at cursor position' command.",
+						0
+					);
+
+				try {
+					const data = await this.dataAdapter.loadFile(chessifyId);
+
+					ctx.addChild(
+						new ReactView(el, source, this.app, this.settings, data)
+					);
+				} catch (e) {
+					new Notice(
+						`There was an error while trying to load ${chessifyId}.json. You can check the plugin folder if the file exist and if not add one via the 'Insert PGN-Editor at cursor position' command.`,
+						0
+					);
+				}
 			}
 		);
 
@@ -51,41 +131,5 @@ export default class ChessifyPlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
-	}
-}
-
-class ReactView extends MarkdownRenderChild {
-	root: ReactDOM.Root;
-	source: string;
-	app: App;
-	settings: ChessifyPluginSettings;
-
-	constructor(
-		containerEL: HTMLElement,
-		source: string,
-		app: App,
-		settings: ChessifyPluginSettings
-	) {
-		super(containerEL);
-		this.source = source;
-		this.app = app;
-		this.settings = settings;
-	}
-
-	onload() {
-		this.root = ReactDOM.createRoot(this.containerEl);
-		this.root.render(
-			<React.StrictMode>
-				<Chessify
-					source={this.source}
-					app={this.app}
-					pluginSettings={this.settings}
-				/>
-			</React.StrictMode>
-		);
-	}
-
-	onunload() {
-		this.root.unmount();
 	}
 }

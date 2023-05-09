@@ -1,0 +1,47 @@
+button:active {
+	transform: translateY(1px);
+}
+
+.vertical-align {
+	display: flex;
+	align-items: center;
+}
+
+.center {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.move-item {
+	padding-left: 8px;
+	user-select: none;
+}
+
+.move-item:hover {
+	background-color: hsl(
+		var(--accent-h),
+		var(--accent-s),
+		calc(var(--accent-l))
+	);
+	color: var(--text-on-accent);
+	cursor: pointer;
+}
+
+.move-item.active {
+	background-color: hsl(
+		var(--accent-h),
+		var(--accent-s),
+		calc(var(--accent-l) - 10%)
+	);
+	color: var(--text-on-accent);
+	font-weight: bold;
+}
+
+.move-indicator {
+	color: var(--color-base-60);
+	text-align: center;
+	background-color: var(--color-base-10);
+	user-select: none;
+	cursor: default;
+}

@@ -1,11 +1,14 @@
-import { parseYaml } from "obsidian";
-import { ChessifyPluginSettings } from "src/components/obsidian/SettingsTab";
-import { Chess, QUEEN, SQUARES, Square } from "chess.js";
+import { Chess, Move, QUEEN, SQUARES, Square } from "chess.js";
 import { Api } from "chessground/api";
 import { Config } from "chessground/config";
+import { DrawShape } from "chessground/draw";
+import { nanoid } from "nanoid";
+import { DataAdapter, parseYaml } from "obsidian";
+import { ChessifyPluginSettings } from "src/components/obsidian/SettingsTab";
 
+//Chess Logic
 type ChessifyAppConfig = ChessifyPluginSettings & {
-	fen: string;
+	chessifyId: string;
 };
 
 export const parseUserConfig = (
@@ -14,7 +17,7 @@ export const parseUserConfig = (
 ): ChessifyAppConfig => {
 	const chessifyConfig: ChessifyAppConfig = {
 		...settings,
-		fen: "",
+		chessifyId: "",
 	};
 
 	try {
@@ -66,5 +69,44 @@ export function playOtherSide(cg: Api, chess: Chess) {
 		} else {
 			cg.set(commonTurnProperties);
 		}
+
+		return chess.history({ verbose: true });
 	};
+}
+
+//Storage Logic
+
+interface ChessifyMove extends Move {
+	subMoves: Move[];
+	shapes: DrawShape[];
+}
+export interface ChessifyFileData {
+	header: { title: string | null };
+	moves: ChessifyMove[];
+}
+
+export class ChessifyDataAdapter {
+	adapter: DataAdapter;
+	storagePath: string;
+
+	constructor(adapter: DataAdapter, storagePath: string) {
+		this.adapter = adapter;
+		this.storagePath = storagePath;
+	}
+
+	async saveFile(data: ChessifyFileData) {
+		const id = nanoid();
+		await this.adapter.write(
+			`${this.storagePath}/${id}.json`,
+			JSON.stringify(data, null, 2),
+			{}
+		);
+
+		return id;
+	}
+
+	async loadFile(id: string): Promise<ChessifyFileData> {
+		const data = await this.adapter.read(`${this.storagePath}/${id}.json`);
+		return JSON.parse(data);
+	}
 }

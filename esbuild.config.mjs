@@ -1,6 +1,6 @@
+import builtins from "builtin-modules";
 import esbuild from "esbuild";
 import process from "process";
-import builtins from "builtin-modules";
 import { renameStyles } from "./rename-styles.mjs";
 
 const banner = `/*

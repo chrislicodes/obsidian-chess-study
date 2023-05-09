@@ -1,4 +1,4 @@
-import { PluginSettingTab, App, Setting } from "obsidian";
+import { App, PluginSettingTab, Setting } from "obsidian";
 import ChessifyPlugin from "src/main";
 
 export interface ChessifyPluginSettings {
