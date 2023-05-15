@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import { Chess, Move } from "chess.js";
 import { Api } from "chessground/api";
 import { Config } from "chessground/config";
+import { DrawShape } from "chessground/draw";
 import { playOtherSide, toColor, toDests } from "src/utils";
 
 export interface ChessGroundSettings {
@@ -15,8 +16,11 @@ export interface ChessGroundSettings {
 	boardColor?: "brown" | "green";
 	chess: Chess;
 	setHistory: React.Dispatch<React.SetStateAction<Move[]>>;
+	setShapes: React.Dispatch<React.SetStateAction<DrawShape[][]>>;
 	setMoveNumber: React.Dispatch<React.SetStateAction<number>>;
+	currentMoveNumber: number;
 	isViewOnly: boolean;
+	currentMoveShapes: DrawShape[];
 }
 
 export function ChessgroundWrapper({
@@ -28,7 +32,10 @@ export function ChessgroundWrapper({
 	chess,
 	setHistory,
 	setMoveNumber,
+	currentMoveNumber,
+	setShapes,
 	isViewOnly,
+	currentMoveShapes,
 }: ChessGroundSettings) {
 	const ref = useRef<HTMLDivElement>(null);
 
@@ -60,9 +67,6 @@ export function ChessgroundWrapper({
 					check: true,
 				},
 				turnColor: toColor(chess),
-				drawable: {
-					onChange(shapes) {},
-				},
 				...config,
 			});
 
@@ -81,12 +85,35 @@ export function ChessgroundWrapper({
 		setApi,
 		setHistory,
 		setMoveNumber,
+		setShapes,
+		currentMoveNumber,
 	]);
 
-	//Sync Is View Only
+	//Sync View Only
 	useEffect(() => {
 		api?.set({ viewOnly: isViewOnly });
 	}, [isViewOnly, api]);
+
+	//Sync Shapes To State
+	useEffect(() => {
+		api?.set({
+			drawable: {
+				onChange(shapes) {
+					setShapes((currentShapes) => {
+						const shapesModified = currentShapes;
+						shapesModified[currentMoveNumber] = shapes;
+
+						return shapesModified;
+					});
+				},
+			},
+		});
+	}, [api, currentMoveNumber, setShapes]);
+
+	//Load Shapes
+	useEffect(() => {
+		if (currentMoveShapes) api?.setShapes(currentMoveShapes);
+	}, [api, currentMoveNumber, currentMoveShapes, setShapes]);
 
 	return (
 		<div

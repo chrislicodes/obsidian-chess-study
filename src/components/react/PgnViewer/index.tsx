@@ -1,5 +1,5 @@
 import { Move } from "chess.js";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Save } from "lucide-react";
 import * as React from "react";
 import { useEffect, useMemo, useRef } from "react";
 
@@ -57,12 +57,14 @@ export const PgnViewer = ({
 	onBackButtonClick,
 	onForwardButtonClick,
 	onMoveItemClick,
+	onSaveButtonClick,
 }: {
 	history: Move[];
 	currentMove: number;
 	onBackButtonClick: () => void;
 	onForwardButtonClick: () => void;
 	onMoveItemClick: (moveIndex: number) => void;
+	onSaveButtonClick: () => void;
 }) => {
 	const movePairs = useMemo(() => chunkArray(history, 2), [history]);
 
@@ -122,6 +124,9 @@ export const PgnViewer = ({
 				</button>
 				<button onClick={() => onForwardButtonClick()}>
 					<ArrowRight />
+				</button>
+				<button onClick={() => onSaveButtonClick()}>
+					<Save strokeWidth={"1px"} />
 				</button>
 			</div>
 		</div>

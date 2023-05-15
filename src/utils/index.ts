@@ -94,15 +94,15 @@ export class ChessifyDataAdapter {
 		this.storagePath = storagePath;
 	}
 
-	async saveFile(data: ChessifyFileData) {
-		const id = nanoid();
+	async saveFile(data: ChessifyFileData, id?: string) {
+		const chessifyId = id || nanoid();
 		await this.adapter.write(
-			`${this.storagePath}/${id}.json`,
+			`${this.storagePath}/${chessifyId}.json`,
 			JSON.stringify(data, null, 2),
 			{}
 		);
 
-		return id;
+		return chessifyId;
 	}
 
 	async loadFile(id: string): Promise<ChessifyFileData> {

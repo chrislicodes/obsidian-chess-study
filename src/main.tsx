@@ -103,7 +103,14 @@ export default class ChessifyPlugin extends Plugin {
 					const data = await this.dataAdapter.loadFile(chessifyId);
 
 					ctx.addChild(
-						new ReactView(el, source, this.app, this.settings, data)
+						new ReactView(
+							el,
+							source,
+							this.app,
+							this.settings,
+							data,
+							this.dataAdapter
+						)
 					);
 				} catch (e) {
 					new Notice(

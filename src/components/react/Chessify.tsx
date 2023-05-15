@@ -1,10 +1,15 @@
 import { Chess, Move } from "chess.js";
 import { Api } from "chessground/api";
-import { App } from "obsidian";
+import { DrawShape } from "chessground/draw";
+import { App, Notice } from "obsidian";
 import * as React from "react";
 import { useCallback, useMemo, useState } from "react";
 import { ChessifyPluginSettings } from "src/components/obsidian/SettingsTab";
-import { ChessifyFileData, parseUserConfig } from "src/utils";
+import {
+	ChessifyDataAdapter,
+	ChessifyFileData,
+	parseUserConfig,
+} from "src/utils";
 import { ChessGroundSettings, ChessgroundWrapper } from "./ChessgroundWrapper";
 import { PgnViewer } from "./PgnViewer";
 
@@ -15,18 +20,22 @@ interface AppProps {
 	app: App;
 	pluginSettings: ChessifyPluginSettings;
 	chessifyData: ChessifyFileData;
+	dataAdapter: ChessifyDataAdapter;
 }
 
 export const Chessify = ({
 	source,
 	pluginSettings,
 	chessifyData,
+	dataAdapter,
 }: AppProps) => {
 	// Parse Obsidian / Code Block Settings
 	const { boardColor, boardOrientation, chessifyId } = parseUserConfig(
 		pluginSettings,
 		source
 	);
+
+	const [chessifyDataModified] = useState(chessifyData);
 
 	// Setup Chessboard and Chess.js APIs
 	const [chessView, setChessView] = useState<Api | null>(null);
@@ -47,6 +56,9 @@ export const Chessify = ({
 	const [history, setHistory] = useState<Move[]>([]);
 	const [isViewOnly, setIsViewOnly] = useState<boolean>(false);
 	const [currentMove, setCurrentMove] = useState<number>(0);
+	const [shapes, setShapes] = useState<DrawShape[][]>(
+		chessifyData.moves.map((data) => data.shapes)
+	);
 
 	//PgnViewer Functions
 	const onBackButtonClick = useCallback(() => {
@@ -101,6 +113,27 @@ export const Chessify = ({
 		[chessView, history]
 	);
 
+	const onSaveButtonClick = useCallback(async () => {
+		const chessifyData = {
+			header: chessifyDataModified.header,
+			moves: chessLogic.history({ verbose: true }).map((move, index) => ({
+				...move,
+				subMoves: [],
+				shapes: shapes[index],
+			})),
+		};
+
+		await dataAdapter.saveFile(chessifyData, chessifyId);
+
+		new Notice("Save successfull!");
+	}, [
+		chessLogic,
+		chessifyDataModified.header,
+		chessifyId,
+		dataAdapter,
+		shapes,
+	]);
+
 	return (
 		<div
 			style={{
@@ -126,6 +159,9 @@ export const Chessify = ({
 					setHistory={setHistory}
 					setMoveNumber={setCurrentMove}
 					isViewOnly={isViewOnly}
+					setShapes={setShapes}
+					currentMoveNumber={currentMove}
+					currentMoveShapes={shapes[currentMove]}
 				/>
 			</div>
 			<div style={{ flex: 1, height: "100%" }}>
@@ -135,6 +171,7 @@ export const Chessify = ({
 					onBackButtonClick={onBackButtonClick}
 					onForwardButtonClick={onForwardButtonClick}
 					onMoveItemClick={onMoveItemClick}
+					onSaveButtonClick={onSaveButtonClick}
 				/>
 			</div>
 		</div>
