@@ -1,3 +1,4 @@
+import { JSONContent } from "@tiptap/react";
 import { Chess, Move, QUEEN, SQUARES, Square } from "chess.js";
 import { Api } from "chessground/api";
 import { Config } from "chessground/config";
@@ -79,6 +80,7 @@ export function playOtherSide(cg: Api, chess: Chess) {
 interface ChessifyMove extends Move {
 	subMoves: Move[];
 	shapes: DrawShape[];
+	comment: JSONContent | null;
 }
 export interface ChessifyFileData {
 	header: { title: string | null };

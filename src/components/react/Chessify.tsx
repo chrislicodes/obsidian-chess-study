@@ -1,3 +1,4 @@
+import { JSONContent } from "@tiptap/react";
 import { Chess, Move } from "chess.js";
 import { Api } from "chessground/api";
 import { DrawShape } from "chessground/draw";
@@ -11,6 +12,7 @@ import {
 	parseUserConfig,
 } from "src/utils";
 import { ChessGroundSettings, ChessgroundWrapper } from "./ChessgroundWrapper";
+import { CommentSection } from "./CommentSection";
 import { PgnViewer } from "./PgnViewer";
 
 export type ChessifyConfig = ChessGroundSettings;
@@ -59,6 +61,9 @@ export const Chessify = ({
 	const [shapes, setShapes] = useState<DrawShape[][]>(
 		chessifyData.moves.map((data) => data.shapes)
 	);
+	const [comments, setComments] = useState<(JSONContent | null)[]>(
+		chessifyData.moves.map((data) => data.comment)
+	);
 
 	//PgnViewer Functions
 	const onBackButtonClick = useCallback(() => {
@@ -101,10 +106,10 @@ export const Chessify = ({
 					fen: move.after,
 					check: tempChess.isCheck(),
 				});
-				if (moveIndex + 1 !== history.length - 1) {
-					setIsViewOnly(false);
-				} else {
+				if (moveIndex !== history.length - 1) {
 					setIsViewOnly(true);
+				} else {
+					setIsViewOnly(false);
 				}
 
 				return moveIndex;
@@ -114,12 +119,13 @@ export const Chessify = ({
 	);
 
 	const onSaveButtonClick = useCallback(async () => {
-		const chessifyData = {
+		const chessifyData: ChessifyFileData = {
 			header: chessifyDataModified.header,
 			moves: chessLogic.history({ verbose: true }).map((move, index) => ({
 				...move,
 				subMoves: [],
 				shapes: shapes[index],
+				comment: comments[index],
 			})),
 		};
 
@@ -130,48 +136,58 @@ export const Chessify = ({
 		chessLogic,
 		chessifyDataModified.header,
 		chessifyId,
+		comments,
 		dataAdapter,
 		shapes,
 	]);
 
 	return (
-		<div
-			style={{
-				display: "flex",
-				height: "450px",
-			}}
-		>
+		<div className="border">
 			<div
 				style={{
-					flex: "0 0 450px",
-					height: "100%",
+					display: "flex",
+					height: "450px",
 				}}
 			>
-				<ChessgroundWrapper
-					api={chessView}
-					setApi={setChessView}
-					chessifyId={chessifyId}
-					config={{
-						orientation: boardOrientation,
+				<div
+					style={{
+						flex: "0 0 450px",
+						height: "100%",
 					}}
-					boardColor={boardColor}
-					chess={chessLogic}
-					setHistory={setHistory}
-					setMoveNumber={setCurrentMove}
-					isViewOnly={isViewOnly}
-					setShapes={setShapes}
-					currentMoveNumber={currentMove}
-					currentMoveShapes={shapes[currentMove]}
-				/>
+				>
+					<ChessgroundWrapper
+						api={chessView}
+						setApi={setChessView}
+						chessifyId={chessifyId}
+						config={{
+							orientation: boardOrientation,
+						}}
+						boardColor={boardColor}
+						chess={chessLogic}
+						setHistory={setHistory}
+						setMoveNumber={setCurrentMove}
+						isViewOnly={isViewOnly}
+						setShapes={setShapes}
+						currentMoveNumber={currentMove}
+						currentMoveShapes={shapes[currentMove]}
+					/>
+				</div>
+				<div style={{ flex: 1, height: "100%" }}>
+					<PgnViewer
+						history={history}
+						currentMove={currentMove}
+						onBackButtonClick={onBackButtonClick}
+						onForwardButtonClick={onForwardButtonClick}
+						onMoveItemClick={onMoveItemClick}
+						onSaveButtonClick={onSaveButtonClick}
+					/>
+				</div>
 			</div>
-			<div style={{ flex: 1, height: "100%" }}>
-				<PgnViewer
-					history={history}
+			<div className="CommentSection border-top">
+				<CommentSection
 					currentMove={currentMove}
-					onBackButtonClick={onBackButtonClick}
-					onForwardButtonClick={onForwardButtonClick}
-					onMoveItemClick={onMoveItemClick}
-					onSaveButtonClick={onSaveButtonClick}
+					currentComment={comments[currentMove]}
+					setComments={setComments}
 				/>
 			</div>
 		</div>

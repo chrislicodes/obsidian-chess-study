@@ -67,6 +67,7 @@ export default class ChessifyPlugin extends Plugin {
 									...move,
 									subMoves: [],
 									shapes: [],
+									comment: null,
 								})),
 						};
 

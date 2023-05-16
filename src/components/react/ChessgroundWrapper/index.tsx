@@ -100,7 +100,7 @@ export function ChessgroundWrapper({
 			drawable: {
 				onChange(shapes) {
 					setShapes((currentShapes) => {
-						const shapesModified = currentShapes;
+						const shapesModified = [...currentShapes];
 						shapesModified[currentMoveNumber] = shapes;
 
 						return shapesModified;

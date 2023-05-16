@@ -44,7 +44,10 @@ const MoveItem = ({
 				(isCurrentMove && "active") || ""
 			} vertical-align`}
 			ref={ref}
-			onClick={() => onMoveItemClick()}
+			onClick={(e) => {
+				e.stopPropagation();
+				onMoveItemClick();
+			}}
 		>
 			{san}
 		</p>
