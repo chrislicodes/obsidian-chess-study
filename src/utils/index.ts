@@ -1,11 +1,11 @@
-import { JSONContent } from "@tiptap/react";
-import { Chess, Move, QUEEN, SQUARES, Square } from "chess.js";
-import { Api } from "chessground/api";
-import { Config } from "chessground/config";
-import { DrawShape } from "chessground/draw";
-import { nanoid } from "nanoid";
-import { DataAdapter, parseYaml } from "obsidian";
-import { ChessifyPluginSettings } from "src/components/obsidian/SettingsTab";
+import { JSONContent } from '@tiptap/react';
+import { Chess, Move, QUEEN, SQUARES, Square } from 'chess.js';
+import { Api } from 'chessground/api';
+import { Config } from 'chessground/config';
+import { DrawShape } from 'chessground/draw';
+import { nanoid } from 'nanoid';
+import { DataAdapter, parseYaml } from 'obsidian';
+import { ChessifyPluginSettings } from 'src/components/obsidian/SettingsTab';
 
 //Chess Logic
 type ChessifyAppConfig = ChessifyPluginSettings & {
@@ -18,7 +18,7 @@ export const parseUserConfig = (
 ): ChessifyAppConfig => {
 	const chessifyConfig: ChessifyAppConfig = {
 		...settings,
-		chessifyId: "",
+		chessifyId: '',
 	};
 
 	try {
@@ -27,12 +27,12 @@ export const parseUserConfig = (
 			...parseYaml(content),
 		};
 	} catch (e) {
-		throw Error("Something went wrong during parsing. :(");
+		throw Error('Something went wrong during parsing. :(');
 	}
 };
 
 export function toColor(chess: Chess) {
-	return chess.turn() === "w" ? "white" : "black";
+	return chess.turn() === 'w' ? 'white' : 'black';
 }
 
 export function toDests(chess: Chess): Map<Square, Square[]> {
@@ -61,7 +61,7 @@ export function playOtherSide(cg: Api, chess: Chess) {
 			check: chess.isCheck(),
 		};
 
-		if (move.flags === "e" || move.promotion) {
+		if (move.flags === 'e' || move.promotion) {
 			//Handle En Passant && Promote to Queen by default
 			cg.set({
 				fen: chess.fen(),
@@ -78,7 +78,7 @@ export function playOtherSide(cg: Api, chess: Chess) {
 //Storage Logic
 
 interface ChessifyMove extends Move {
-	subMoves: Move[];
+	variants: Move[][];
 	shapes: DrawShape[];
 	comment: JSONContent | null;
 }

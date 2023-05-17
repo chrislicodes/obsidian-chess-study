@@ -1,10 +1,10 @@
 {
 	"id": "obsidian-chessify",
 	"name": "Chessify",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"minAppVersion": "0.15.0",
-	"description": "A chess study helper for Obsidian (https://obsidian.md)",
-	"author": "chrislicodes",
+	"description": "A chess study helper and PGN viewer for Obsidian.",
+	"author": "Christoph Lindstädt",
 	"authorUrl": "https://github.com/chrislicodes",
 	"isDesktopOnly": false
 }

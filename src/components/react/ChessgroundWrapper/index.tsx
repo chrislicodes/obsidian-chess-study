@@ -1,19 +1,19 @@
-import { Chessground as ChessgroundApi } from "chessground";
-import * as React from "react";
-import { useEffect, useRef } from "react";
+import { Chessground as ChessgroundApi } from 'chessground';
+import * as React from 'react';
+import { useEffect, useRef } from 'react';
 
-import { Chess, Move } from "chess.js";
-import { Api } from "chessground/api";
-import { Config } from "chessground/config";
-import { DrawShape } from "chessground/draw";
-import { playOtherSide, toColor, toDests } from "src/utils";
+import { Chess, Move } from 'chess.js';
+import { Api } from 'chessground/api';
+import { Config } from 'chessground/config';
+import { DrawShape } from 'chessground/draw';
+import { playOtherSide, toColor, toDests } from 'src/utils';
 
 export interface ChessGroundSettings {
 	api: Api | null;
 	setApi: React.Dispatch<React.SetStateAction<Api>>;
 	chessifyId: string;
 	config?: Config;
-	boardColor?: "brown" | "green";
+	boardColor?: 'brown' | 'green';
 	chess: Chess;
 	setHistory: React.Dispatch<React.SetStateAction<Move[]>>;
 	setShapes: React.Dispatch<React.SetStateAction<DrawShape[][]>>;
@@ -28,7 +28,7 @@ export const ChessgroundWrapper = React.memo(
 		api,
 		setApi,
 		chessifyId,
-		boardColor = "green",
+		boardColor = 'green',
 		config = {},
 		chess,
 		setHistory,
@@ -54,10 +54,7 @@ export const ChessgroundWrapper = React.memo(
 						events: {
 							//Hook up the Chessground UI changes to our App State
 							after: (orig, dest, _metadata) => {
-								const handler = playOtherSide(
-									chessgroundApi,
-									chess
-								);
+								const handler = playOtherSide(chessgroundApi, chess);
 
 								setHistory(handler(orig, dest));
 								setMoveNumber((state) => state + 1);
@@ -119,18 +116,17 @@ export const ChessgroundWrapper = React.memo(
 		return (
 			<div
 				style={{
-					height: "100%",
-					width: "100%",
+					height: '100%',
+					width: '100%',
 				}}
 				className={`${boardColor}-board`}
 			>
 				<div
 					ref={ref}
 					style={{
-						height: "100%",
-						width: "100%",
-						display:
-							"table" /* hack: round to full pixel size in chrome */,
+						height: '100%',
+						width: '100%',
+						display: 'table' /* hack: round to full pixel size in chrome */,
 					}}
 				/>
 			</div>
@@ -138,4 +134,4 @@ export const ChessgroundWrapper = React.memo(
 	}
 );
 
-ChessgroundWrapper.displayName = "ChessgroundWrapper";
+ChessgroundWrapper.displayName = 'ChessgroundWrapper';

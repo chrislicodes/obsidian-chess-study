@@ -1,4 +1,4 @@
-import { App, Modal, Setting } from "obsidian";
+import { App, Modal, Setting } from 'obsidian';
 
 export class PgnModal extends Modal {
 	pgn: string;
@@ -12,21 +12,21 @@ export class PgnModal extends Modal {
 	onOpen() {
 		const { contentEl } = this;
 
-		contentEl.createEl("h1", {
-			text: "Paste the full PGN (leave empty for a new game):",
+		contentEl.createEl('h1', {
+			text: 'Paste the full PGN (leave empty for a new game):',
 		});
 
-		new Setting(contentEl).setName("PGN").addTextArea((text) =>
+		new Setting(contentEl).setName('PGN').addTextArea((text) =>
 			text
 				.onChange((value) => {
 					this.pgn = value;
 				})
-				.inputEl.setCssStyles({ width: "100%", height: "250px" })
+				.inputEl.setCssStyles({ width: '100%', height: '250px' })
 		);
 
 		new Setting(contentEl).addButton((btn) =>
 			btn
-				.setButtonText("Submit")
+				.setButtonText('Submit')
 				.setCta()
 				.onClick(() => {
 					this.close();

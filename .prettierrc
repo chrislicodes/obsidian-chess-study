@@ -1,0 +1,6 @@
+{
+	"singleQuote": true,
+	"tabWidth": 2,
+	"proseWrap": "preserve",
+	"semi": true
+}

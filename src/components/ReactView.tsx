@@ -1,9 +1,9 @@
-import { App, MarkdownRenderChild } from "obsidian";
-import * as React from "react";
-import * as ReactDOM from "react-dom/client";
-import { ChessifyDataAdapter, ChessifyFileData } from "src/utils";
-import { Chessify } from "../components/react/Chessify";
-import { ChessifyPluginSettings } from "./obsidian/SettingsTab";
+import { App, MarkdownRenderChild } from 'obsidian';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom/client';
+import { ChessifyDataAdapter, ChessifyFileData } from 'src/utils';
+import { Chessify } from '../components/react/Chessify';
+import { ChessifyPluginSettings } from './obsidian/SettingsTab';
 
 export class ReactView extends MarkdownRenderChild {
 	root: ReactDOM.Root;

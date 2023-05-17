@@ -1,7 +1,7 @@
-import { EditorContent, JSONContent, useEditor } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import * as React from "react";
-import { useEffect } from "react";
+import { EditorContent, JSONContent, useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import * as React from 'react';
+import { useEffect } from 'react';
 
 interface CommentSectionProps {
 	currentMove: number;
@@ -16,8 +16,7 @@ export const CommentSection = React.memo(
 			onUpdate: (state) => {
 				setComments((currentComments) => {
 					const currentCommentModified = [...currentComments];
-					currentCommentModified[currentMove] =
-						state.editor.getJSON();
+					currentCommentModified[currentMove] = state.editor.getJSON();
 					return currentCommentModified;
 				});
 			},
@@ -40,4 +39,4 @@ export const CommentSection = React.memo(
 	}
 );
 
-CommentSection.displayName = "CommentSection";
+CommentSection.displayName = 'CommentSection';

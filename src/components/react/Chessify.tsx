@@ -1,19 +1,19 @@
-import { JSONContent } from "@tiptap/react";
-import { Chess, Move } from "chess.js";
-import { Api } from "chessground/api";
-import { DrawShape } from "chessground/draw";
-import { App, Notice } from "obsidian";
-import * as React from "react";
-import { useCallback, useMemo, useState } from "react";
-import { ChessifyPluginSettings } from "src/components/obsidian/SettingsTab";
+import { JSONContent } from '@tiptap/react';
+import { Chess, Move } from 'chess.js';
+import { Api } from 'chessground/api';
+import { DrawShape } from 'chessground/draw';
+import { App, Notice } from 'obsidian';
+import * as React from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { ChessifyPluginSettings } from 'src/components/obsidian/SettingsTab';
 import {
 	ChessifyDataAdapter,
 	ChessifyFileData,
 	parseUserConfig,
-} from "src/utils";
-import { ChessGroundSettings, ChessgroundWrapper } from "./ChessgroundWrapper";
-import { CommentSection } from "./CommentSection";
-import { PgnViewer } from "./PgnViewer";
+} from 'src/utils';
+import { ChessGroundSettings, ChessgroundWrapper } from './ChessgroundWrapper';
+import { CommentSection } from './CommentSection';
+import { PgnViewer } from './PgnViewer';
 
 export type ChessifyConfig = ChessGroundSettings;
 
@@ -90,8 +90,7 @@ export const Chessify = ({
 					fen: move.after,
 					check: tempChess.isCheck(),
 				});
-				if (currentMove + 1 === history.length - 1)
-					setIsViewOnly(false);
+				if (currentMove + 1 === history.length - 1) setIsViewOnly(false);
 				return currentMove + 1;
 			});
 		}
@@ -123,7 +122,7 @@ export const Chessify = ({
 			header: chessifyDataModified.header,
 			moves: chessLogic.history({ verbose: true }).map((move, index) => ({
 				...move,
-				subMoves: [],
+				variants: [],
 				shapes: shapes[index],
 				comment: comments[index],
 			})),
@@ -131,7 +130,7 @@ export const Chessify = ({
 
 		await dataAdapter.saveFile(chessifyData, chessifyId);
 
-		new Notice("Save successfull!");
+		new Notice('Save successfull!');
 	}, [
 		chessLogic,
 		chessifyDataModified.header,
@@ -145,14 +144,14 @@ export const Chessify = ({
 		<div className="border">
 			<div
 				style={{
-					display: "flex",
-					height: "450px",
+					display: 'flex',
+					height: '450px',
 				}}
 			>
 				<div
 					style={{
-						flex: "0 0 450px",
-						height: "100%",
+						flex: '0 0 450px',
+						height: '100%',
 					}}
 				>
 					<ChessgroundWrapper
@@ -172,7 +171,7 @@ export const Chessify = ({
 						currentMoveShapes={shapes[currentMove]}
 					/>
 				</div>
-				<div style={{ flex: 1, height: "100%" }}>
+				<div style={{ flex: 1, height: '100%' }}>
 					<PgnViewer
 						history={history}
 						currentMove={currentMove}

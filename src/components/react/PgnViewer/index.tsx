@@ -1,7 +1,7 @@
-import { Move } from "chess.js";
-import { ArrowLeft, ArrowRight, Save } from "lucide-react";
-import * as React from "react";
-import { useEffect, useMemo, useRef } from "react";
+import { Move } from 'chess.js';
+import { ArrowLeft, ArrowRight, Save } from 'lucide-react';
+import * as React from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 
 const chunkArray = <T,>(array: T[], chunkSize: number) => {
 	return array.reduce((resultArray, item, index) => {
@@ -31,9 +31,9 @@ const MoveItem = ({
 	useEffect(() => {
 		if (ref.current && isCurrentMove) {
 			ref.current?.scrollIntoView({
-				behavior: "smooth",
-				block: "nearest",
-				inline: "end",
+				behavior: 'smooth',
+				block: 'nearest',
+				inline: 'end',
 			});
 		}
 	}, [isCurrentMove]);
@@ -41,7 +41,7 @@ const MoveItem = ({
 	return (
 		<p
 			className={`move-item ${
-				(isCurrentMove && "active") || ""
+				(isCurrentMove && 'active') || ''
 			} vertical-align`}
 			ref={ref}
 			onClick={(e) => {
@@ -73,41 +73,33 @@ export const PgnViewer = React.memo(
 		const movePairs = useMemo(() => chunkArray(history, 2), [history]);
 
 		return (
-			<div style={{ width: "100%", height: "100%" }}>
-				<div style={{ height: "415px" }}>
+			<div style={{ width: '100%', height: '100%' }}>
+				<div style={{ height: '415px' }}>
 					<div
 						style={{
-							display: "grid",
-							gridTemplateColumns: "0.15fr 0.425fr 0.425fr",
-							gridAutoRows: "30px",
-							width: "100%",
-							maxHeight: "415px",
-							overflowY: "scroll",
+							display: 'grid',
+							gridTemplateColumns: '0.15fr 0.425fr 0.425fr',
+							gridAutoRows: '30px',
+							width: '100%',
+							maxHeight: '415px',
+							overflowY: 'scroll',
 						}}
 					>
 						{movePairs.map((pair, i) => {
 							const [wMove, bMove] = pair;
 							return (
 								<React.Fragment key={wMove.san + bMove?.san}>
-									<p className="move-indicator center">
-										{i + 1}
-									</p>
+									<p className="move-indicator center">{i + 1}</p>
 									<MoveItem
 										san={wMove.san}
 										isCurrentMove={i * 2 === currentMove}
-										onMoveItemClick={() =>
-											onMoveItemClick(i * 2)
-										}
+										onMoveItemClick={() => onMoveItemClick(i * 2)}
 									/>
 									{bMove && (
 										<MoveItem
 											san={bMove.san}
-											isCurrentMove={
-												i * 2 + 1 === currentMove
-											}
-											onMoveItemClick={() =>
-												onMoveItemClick(i * 2 + 1)
-											}
+											isCurrentMove={i * 2 + 1 === currentMove}
+											onMoveItemClick={() => onMoveItemClick(i * 2 + 1)}
 										/>
 									)}
 								</React.Fragment>
@@ -117,12 +109,12 @@ export const PgnViewer = React.memo(
 				</div>
 				<div
 					style={{
-						display: "flex",
-						justifyContent: "center",
-						alignItems: "center",
-						width: "100%",
-						gap: "4px",
-						height: "35px",
+						display: 'flex',
+						justifyContent: 'center',
+						alignItems: 'center',
+						width: '100%',
+						gap: '4px',
+						height: '35px',
 					}}
 				>
 					<button onClick={() => onBackButtonClick()}>
@@ -132,7 +124,7 @@ export const PgnViewer = React.memo(
 						<ArrowRight />
 					</button>
 					<button onClick={() => onSaveButtonClick()}>
-						<Save strokeWidth={"1px"} />
+						<Save strokeWidth={'1px'} />
 					</button>
 				</div>
 			</div>
@@ -140,4 +132,4 @@ export const PgnViewer = React.memo(
 	}
 );
 
-PgnViewer.displayName = "PgnViewer";
+PgnViewer.displayName = 'PgnViewer';

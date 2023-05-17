@@ -1,25 +1,24 @@
-import { Chess } from "chess.js";
-import { Editor, Notice, Plugin } from "obsidian";
-import { ReactView } from "./components/ReactView";
-import { PgnModal } from "./components/obsidian/PgnModal";
+import { Chess } from 'chess.js';
+import { Editor, Notice, Plugin } from 'obsidian';
+import { ReactView } from './components/ReactView';
+import { PgnModal } from './components/obsidian/PgnModal';
 import {
 	ChessifyPluginSettings,
 	DEFAULT_SETTINGS,
 	SettingsTab,
-} from "./components/obsidian/SettingsTab";
+} from './components/obsidian/SettingsTab';
 import {
 	ChessifyDataAdapter,
 	ChessifyFileData,
 	parseUserConfig,
-} from "./utils";
+} from './utils';
 
 // these styles must be imported somewhere
-import "assets/board/green.css";
-import "chessground/assets/chessground.base.css";
-import "chessground/assets/chessground.brown.css";
-import "chessground/assets/chessground.cburnett.css";
-import "../reset.css";
-import "./main.css";
+import 'assets/board/green.css';
+import 'chessground/assets/chessground.base.css';
+import 'chessground/assets/chessground.brown.css';
+import 'chessground/assets/chessground.cburnett.css';
+import './main.css';
 
 export default class ChessifyPlugin extends Plugin {
 	settings: ChessifyPluginSettings;
@@ -41,8 +40,8 @@ export default class ChessifyPlugin extends Plugin {
 
 		// Add command
 		this.addCommand({
-			id: "insert-chesser",
-			name: "Insert PGN-Editor at cursor position",
+			id: 'insert-chesser',
+			name: 'Insert PGN-Editor at cursor position',
 			editorCallback: (editor: Editor) => {
 				const cursorPosition = editor.getCursor();
 
@@ -59,28 +58,24 @@ export default class ChessifyPlugin extends Plugin {
 
 						const chessifyFileData: ChessifyFileData = {
 							header: {
-								title: chess.header()["opening"] || null,
+								title: chess.header()['opening'] || null,
 							},
-							moves: chess
-								.history({ verbose: true })
-								.map((move) => ({
-									...move,
-									subMoves: [],
-									shapes: [],
-									comment: null,
-								})),
+							moves: chess.history({ verbose: true }).map((move) => ({
+								...move,
+								variants: [],
+								shapes: [],
+								comment: null,
+							})),
 						};
 
-						const id = await this.dataAdapter.saveFile(
-							chessifyFileData
-						);
+						const id = await this.dataAdapter.saveFile(chessifyFileData);
 
 						editor.replaceRange(
 							`\`\`\`chessify\nchessifyId: ${id}\n\`\`\``,
 							cursorPosition
 						);
 					} catch (e) {
-						new Notice("There was an error during PGN parsing.", 0);
+						new Notice('There was an error during PGN parsing.', 0);
 					}
 				};
 
@@ -90,7 +85,7 @@ export default class ChessifyPlugin extends Plugin {
 
 		// Add chessify code block processor
 		this.registerMarkdownCodeBlockProcessor(
-			"chessify",
+			'chessify',
 			async (source, el, ctx) => {
 				const { chessifyId } = parseUserConfig(this.settings, source);
 
@@ -122,19 +117,15 @@ export default class ChessifyPlugin extends Plugin {
 			}
 		);
 
-		console.log("Chessify successfully loaded");
+		console.log('Chessify successfully loaded');
 	}
 
 	async onunload() {
-		console.log("Chessify successfully unloaded");
+		console.log('Chessify successfully unloaded');
 	}
 
 	async loadSettings() {
-		this.settings = Object.assign(
-			{},
-			DEFAULT_SETTINGS,
-			await this.loadData()
-		);
+		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
 	}
 
 	async saveSettings() {

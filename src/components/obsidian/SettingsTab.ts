@@ -1,14 +1,14 @@
-import { App, PluginSettingTab, Setting } from "obsidian";
-import ChessifyPlugin from "src/main";
+import { App, PluginSettingTab, Setting } from 'obsidian';
+import ChessifyPlugin from 'src/main';
 
 export interface ChessifyPluginSettings {
-	boardOrientation: "white" | "black";
-	boardColor: "green" | "brown";
+	boardOrientation: 'white' | 'black';
+	boardColor: 'green' | 'brown';
 }
 
 export const DEFAULT_SETTINGS: ChessifyPluginSettings = {
-	boardOrientation: "white",
-	boardColor: "green",
+	boardOrientation: 'white',
+	boardColor: 'green',
 };
 
 export class SettingsTab extends PluginSettingTab {
@@ -24,38 +24,36 @@ export class SettingsTab extends PluginSettingTab {
 
 		containerEl.empty();
 
-		containerEl.createEl("h2", { text: "Obsidian Chessify Settings" });
+		containerEl.createEl('h2', { text: 'Obsidian Chessify Settings' });
 
 		new Setting(containerEl)
-			.setName("Board Orientation")
-			.setDesc("Sets the default orientation of the board")
+			.setName('Board Orientation')
+			.setDesc('Sets the default orientation of the board')
 			.addDropdown((dropdown) => {
-				dropdown.addOption("white", "White");
-				dropdown.addOption("black", "Black");
+				dropdown.addOption('white', 'White');
+				dropdown.addOption('black', 'Black');
 
 				dropdown
 					.setValue(this.plugin.settings.boardOrientation)
 					.onChange((orientation) => {
 						this.plugin.settings.boardOrientation = orientation as
-							| "white"
-							| "black";
+							| 'white'
+							| 'black';
 						this.plugin.saveSettings();
 					});
 			});
 
 		new Setting(containerEl)
-			.setName("Board Color")
-			.setDesc("Sets the default color of the board")
+			.setName('Board Color')
+			.setDesc('Sets the default color of the board')
 			.addDropdown((dropdown) => {
-				dropdown.addOption("green", "Green");
-				dropdown.addOption("brown", "Brown");
+				dropdown.addOption('green', 'Green');
+				dropdown.addOption('brown', 'Brown');
 
 				dropdown
 					.setValue(this.plugin.settings.boardColor)
 					.onChange((boardColor) => {
-						this.plugin.settings.boardColor = boardColor as
-							| "green"
-							| "brown";
+						this.plugin.settings.boardColor = boardColor as 'green' | 'brown';
 						this.plugin.saveSettings();
 					});
 			});
