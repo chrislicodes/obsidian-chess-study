@@ -20,15 +20,15 @@
 		"@tiptap/pm": "2.0.3",
 		"@tiptap/react": "2.0.3",
 		"@tiptap/starter-kit": "2.0.3",
-		"chess.js": "1.0.0-beta.5",
+		"chess.js": "1.0.0-beta.6",
 		"chessground": "8.3.7",
-		"lucide-react": "0.216.0",
+		"lucide-react": "0.217.0",
 		"nanoid": "4.0.2",
 		"react": "18.2.0",
 		"react-dom": "18.2.0"
 	},
 	"devDependencies": {
-		"@types/node": "20.1.5",
+		"@types/node": "20.1.7",
 		"@types/react": "18.2.6",
 		"@types/react-dom": "18.2.4",
 		"@typescript-eslint/eslint-plugin": "5.59.6",
