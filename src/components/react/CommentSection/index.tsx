@@ -9,34 +9,35 @@ interface CommentSectionProps {
 	setComments: React.Dispatch<React.SetStateAction<(JSONContent | null)[]>>;
 }
 
-export const CommentSection = ({
-	currentMove,
-	currentComment,
-	setComments,
-}: CommentSectionProps) => {
-	const editor = useEditor({
-		extensions: [StarterKit],
-		onUpdate: (state) => {
-			setComments((currentComments) => {
-				const currentCommentModified = [...currentComments];
-				currentCommentModified[currentMove] = state.editor.getJSON();
-				return currentCommentModified;
-			});
-		},
-	});
+export const CommentSection = React.memo(
+	({ currentMove, currentComment, setComments }: CommentSectionProps) => {
+		const editor = useEditor({
+			extensions: [StarterKit],
+			onUpdate: (state) => {
+				setComments((currentComments) => {
+					const currentCommentModified = [...currentComments];
+					currentCommentModified[currentMove] =
+						state.editor.getJSON();
+					return currentCommentModified;
+				});
+			},
+		});
 
-	useEffect(() => {
-		if (!editor) return;
-		const { from, to } = editor.state.selection;
-		if (currentComment) {
-			editor.commands.setContent(currentComment, false, {
-				preserveWhitespace: true,
-			});
-		} else {
-			editor.commands.clearContent();
-		}
-		editor.commands.setTextSelection({ from, to });
-	}, [currentComment, editor]);
+		useEffect(() => {
+			if (!editor) return;
+			const { from, to } = editor.state.selection;
+			if (currentComment) {
+				editor.commands.setContent(currentComment, false, {
+					preserveWhitespace: true,
+				});
+			} else {
+				editor.commands.clearContent();
+			}
+			editor.commands.setTextSelection({ from, to });
+		}, [currentComment, editor]);
 
-	return <EditorContent editor={editor} />;
-};
+		return <EditorContent editor={editor} />;
+	}
+);
+
+CommentSection.displayName = "CommentSection";

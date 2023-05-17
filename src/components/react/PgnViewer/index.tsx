@@ -54,84 +54,90 @@ const MoveItem = ({
 	);
 };
 
-export const PgnViewer = ({
-	history,
-	currentMove,
-	onBackButtonClick,
-	onForwardButtonClick,
-	onMoveItemClick,
-	onSaveButtonClick,
-}: {
-	history: Move[];
-	currentMove: number;
-	onBackButtonClick: () => void;
-	onForwardButtonClick: () => void;
-	onMoveItemClick: (moveIndex: number) => void;
-	onSaveButtonClick: () => void;
-}) => {
-	const movePairs = useMemo(() => chunkArray(history, 2), [history]);
+export const PgnViewer = React.memo(
+	({
+		history,
+		currentMove,
+		onBackButtonClick,
+		onForwardButtonClick,
+		onMoveItemClick,
+		onSaveButtonClick,
+	}: {
+		history: Move[];
+		currentMove: number;
+		onBackButtonClick: () => void;
+		onForwardButtonClick: () => void;
+		onMoveItemClick: (moveIndex: number) => void;
+		onSaveButtonClick: () => void;
+	}) => {
+		const movePairs = useMemo(() => chunkArray(history, 2), [history]);
 
-	return (
-		<div style={{ width: "100%", height: "100%" }}>
-			<div style={{ height: "415px" }}>
-				<div
-					style={{
-						display: "grid",
-						gridTemplateColumns: "0.15fr 0.425fr 0.425fr",
-						gridAutoRows: "30px",
-						width: "100%",
-						maxHeight: "415px",
-						overflowY: "scroll",
-					}}
-				>
-					{movePairs.map((pair, i) => {
-						const [wMove, bMove] = pair;
-						return (
-							<React.Fragment key={wMove.san + bMove?.san}>
-								<p className="move-indicator center">{i + 1}</p>
-								<MoveItem
-									san={wMove.san}
-									isCurrentMove={i * 2 === currentMove}
-									onMoveItemClick={() =>
-										onMoveItemClick(i * 2)
-									}
-								/>
-								{bMove && (
+		return (
+			<div style={{ width: "100%", height: "100%" }}>
+				<div style={{ height: "415px" }}>
+					<div
+						style={{
+							display: "grid",
+							gridTemplateColumns: "0.15fr 0.425fr 0.425fr",
+							gridAutoRows: "30px",
+							width: "100%",
+							maxHeight: "415px",
+							overflowY: "scroll",
+						}}
+					>
+						{movePairs.map((pair, i) => {
+							const [wMove, bMove] = pair;
+							return (
+								<React.Fragment key={wMove.san + bMove?.san}>
+									<p className="move-indicator center">
+										{i + 1}
+									</p>
 									<MoveItem
-										san={bMove.san}
-										isCurrentMove={
-											i * 2 + 1 === currentMove
-										}
+										san={wMove.san}
+										isCurrentMove={i * 2 === currentMove}
 										onMoveItemClick={() =>
-											onMoveItemClick(i * 2 + 1)
+											onMoveItemClick(i * 2)
 										}
 									/>
-								)}
-							</React.Fragment>
-						);
-					})}
+									{bMove && (
+										<MoveItem
+											san={bMove.san}
+											isCurrentMove={
+												i * 2 + 1 === currentMove
+											}
+											onMoveItemClick={() =>
+												onMoveItemClick(i * 2 + 1)
+											}
+										/>
+									)}
+								</React.Fragment>
+							);
+						})}
+					</div>
+				</div>
+				<div
+					style={{
+						display: "flex",
+						justifyContent: "center",
+						alignItems: "center",
+						width: "100%",
+						gap: "4px",
+						height: "35px",
+					}}
+				>
+					<button onClick={() => onBackButtonClick()}>
+						<ArrowLeft />
+					</button>
+					<button onClick={() => onForwardButtonClick()}>
+						<ArrowRight />
+					</button>
+					<button onClick={() => onSaveButtonClick()}>
+						<Save strokeWidth={"1px"} />
+					</button>
 				</div>
 			</div>
-			<div
-				style={{
-					display: "flex",
-					justifyContent: "center",
-					alignItems: "center",
-					width: "100%",
-					gap: "4px",
-					height: "35px",
-				}}
-			>
-				<button onClick={() => onBackButtonClick()}>
-					<ArrowLeft />
-				</button>
-				<button onClick={() => onForwardButtonClick()}>
-					<ArrowRight />
-				</button>
-				<button onClick={() => onSaveButtonClick()}>
-					<Save strokeWidth={"1px"} />
-				</button>
-			</div>
-		</div>
-	);
-};
+		);
+	}
+);
+
+PgnViewer.displayName = "PgnViewer";
