@@ -1,20 +1,20 @@
 import { App, PluginSettingTab, Setting } from 'obsidian';
-import ChessifyPlugin from 'src/main';
+import ChessStudyPlugin from 'src/main';
 
-export interface ChessifyPluginSettings {
+export interface ChessStudyPluginSettings {
 	boardOrientation: 'white' | 'black';
 	boardColor: 'green' | 'brown';
 }
 
-export const DEFAULT_SETTINGS: ChessifyPluginSettings = {
+export const DEFAULT_SETTINGS: ChessStudyPluginSettings = {
 	boardOrientation: 'white',
 	boardColor: 'green',
 };
 
 export class SettingsTab extends PluginSettingTab {
-	plugin: ChessifyPlugin;
+	plugin: ChessStudyPlugin;
 
-	constructor(app: App, plugin: ChessifyPlugin) {
+	constructor(app: App, plugin: ChessStudyPlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
@@ -24,7 +24,7 @@ export class SettingsTab extends PluginSettingTab {
 
 		containerEl.empty();
 
-		containerEl.createEl('h2', { text: 'Obsidian Chessify Settings' });
+		containerEl.createEl('h2', { text: 'Obsidian Chess Study Settings' });
 
 		new Setting(containerEl)
 			.setName('Board Orientation')

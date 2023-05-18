@@ -11,7 +11,7 @@ import { playOtherSide, toColor, toDests } from 'src/utils';
 export interface ChessGroundSettings {
 	api: Api | null;
 	setApi: React.Dispatch<React.SetStateAction<Api>>;
-	chessifyId: string;
+	chessStudyId: string;
 	config?: Config;
 	boardColor?: 'brown' | 'green';
 	chess: Chess;
@@ -27,7 +27,7 @@ export const ChessgroundWrapper = React.memo(
 	({
 		api,
 		setApi,
-		chessifyId,
+		chessStudyId,
 		boardColor = 'green',
 		config = {},
 		chess,
@@ -78,7 +78,7 @@ export const ChessgroundWrapper = React.memo(
 			ref,
 			chess,
 			api,
-			chessifyId,
+			chessStudyId,
 			config,
 			setApi,
 			setHistory,

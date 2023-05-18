@@ -5,25 +5,25 @@ import { Config } from 'chessground/config';
 import { DrawShape } from 'chessground/draw';
 import { nanoid } from 'nanoid';
 import { DataAdapter, parseYaml } from 'obsidian';
-import { ChessifyPluginSettings } from 'src/components/obsidian/SettingsTab';
+import { ChessStudyPluginSettings } from 'src/components/obsidian/SettingsTab';
 
 //Chess Logic
-type ChessifyAppConfig = ChessifyPluginSettings & {
-	chessifyId: string;
+type ChessStudyAppConfig = ChessStudyPluginSettings & {
+	chessStudyId: string;
 };
 
 export const parseUserConfig = (
-	settings: ChessifyPluginSettings,
+	settings: ChessStudyPluginSettings,
 	content: string
-): ChessifyAppConfig => {
-	const chessifyConfig: ChessifyAppConfig = {
+): ChessStudyAppConfig => {
+	const chessStudyConfig: ChessStudyAppConfig = {
 		...settings,
-		chessifyId: '',
+		chessStudyId: '',
 	};
 
 	try {
 		return {
-			...chessifyConfig,
+			...chessStudyConfig,
 			...parseYaml(content),
 		};
 	} catch (e) {
@@ -77,17 +77,17 @@ export function playOtherSide(cg: Api, chess: Chess) {
 
 //Storage Logic
 
-interface ChessifyMove extends Move {
+interface ChessStudyMove extends Move {
 	variants: Move[][];
 	shapes: DrawShape[];
 	comment: JSONContent | null;
 }
-export interface ChessifyFileData {
+export interface ChessStudyFileData {
 	header: { title: string | null };
-	moves: ChessifyMove[];
+	moves: ChessStudyMove[];
 }
 
-export class ChessifyDataAdapter {
+export class ChessStudyDataAdapter {
 	adapter: DataAdapter;
 	storagePath: string;
 
@@ -96,18 +96,18 @@ export class ChessifyDataAdapter {
 		this.storagePath = storagePath;
 	}
 
-	async saveFile(data: ChessifyFileData, id?: string) {
-		const chessifyId = id || nanoid();
+	async saveFile(data: ChessStudyFileData, id?: string) {
+		const chessStudyId = id || nanoid();
 		await this.adapter.write(
-			`${this.storagePath}/${chessifyId}.json`,
+			`${this.storagePath}/${chessStudyId}.json`,
 			JSON.stringify(data, null, 2),
 			{}
 		);
 
-		return chessifyId;
+		return chessStudyId;
 	}
 
-	async loadFile(id: string): Promise<ChessifyFileData> {
+	async loadFile(id: string): Promise<ChessStudyFileData> {
 		const data = await this.adapter.read(`${this.storagePath}/${id}.json`);
 		return JSON.parse(data);
 	}

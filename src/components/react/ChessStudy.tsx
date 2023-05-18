@@ -5,46 +5,46 @@ import { DrawShape } from 'chessground/draw';
 import { App, Notice } from 'obsidian';
 import * as React from 'react';
 import { useCallback, useMemo, useState } from 'react';
-import { ChessifyPluginSettings } from 'src/components/obsidian/SettingsTab';
+import { ChessStudyPluginSettings } from 'src/components/obsidian/SettingsTab';
 import {
-	ChessifyDataAdapter,
-	ChessifyFileData,
+	ChessStudyDataAdapter,
+	ChessStudyFileData,
 	parseUserConfig,
 } from 'src/utils';
 import { ChessGroundSettings, ChessgroundWrapper } from './ChessgroundWrapper';
 import { CommentSection } from './CommentSection';
 import { PgnViewer } from './PgnViewer';
 
-export type ChessifyConfig = ChessGroundSettings;
+export type ChessStudyConfig = ChessGroundSettings;
 
 interface AppProps {
 	source: string;
 	app: App;
-	pluginSettings: ChessifyPluginSettings;
-	chessifyData: ChessifyFileData;
-	dataAdapter: ChessifyDataAdapter;
+	pluginSettings: ChessStudyPluginSettings;
+	chessStudyData: ChessStudyFileData;
+	dataAdapter: ChessStudyDataAdapter;
 }
 
-export const Chessify = ({
+export const ChessStudy = ({
 	source,
 	pluginSettings,
-	chessifyData,
+	chessStudyData,
 	dataAdapter,
 }: AppProps) => {
 	// Parse Obsidian / Code Block Settings
-	const { boardColor, boardOrientation, chessifyId } = parseUserConfig(
+	const { boardColor, boardOrientation, chessStudyId } = parseUserConfig(
 		pluginSettings,
 		source
 	);
 
-	const [chessifyDataModified] = useState(chessifyData);
+	const [chessStudyDataModified] = useState(chessStudyData);
 
 	// Setup Chessboard and Chess.js APIs
 	const [chessView, setChessView] = useState<Api | null>(null);
 	const chessLogic = useMemo(() => {
 		const chess = new Chess();
 
-		chessifyData.moves.forEach((move) => {
+		chessStudyData.moves.forEach((move) => {
 			chess.move({
 				from: move.from,
 				to: move.to,
@@ -52,17 +52,17 @@ export const Chessify = ({
 			});
 		});
 		return chess;
-	}, [chessifyData.moves]);
+	}, [chessStudyData.moves]);
 
 	// Track Application State
 	const [history, setHistory] = useState<Move[]>([]);
 	const [isViewOnly, setIsViewOnly] = useState<boolean>(false);
 	const [currentMove, setCurrentMove] = useState<number>(0);
 	const [shapes, setShapes] = useState<DrawShape[][]>(
-		chessifyData.moves.map((data) => data.shapes)
+		chessStudyData.moves.map((data) => data.shapes)
 	);
 	const [comments, setComments] = useState<(JSONContent | null)[]>(
-		chessifyData.moves.map((data) => data.comment)
+		chessStudyData.moves.map((data) => data.comment)
 	);
 
 	//PgnViewer Functions
@@ -118,8 +118,8 @@ export const Chessify = ({
 	);
 
 	const onSaveButtonClick = useCallback(async () => {
-		const chessifyData: ChessifyFileData = {
-			header: chessifyDataModified.header,
+		const chessStudyData: ChessStudyFileData = {
+			header: chessStudyDataModified.header,
 			moves: chessLogic.history({ verbose: true }).map((move, index) => ({
 				...move,
 				variants: [],
@@ -128,13 +128,13 @@ export const Chessify = ({
 			})),
 		};
 
-		await dataAdapter.saveFile(chessifyData, chessifyId);
+		await dataAdapter.saveFile(chessStudyData, chessStudyId);
 
 		new Notice('Save successfull!');
 	}, [
 		chessLogic,
-		chessifyDataModified.header,
-		chessifyId,
+		chessStudyDataModified.header,
+		chessStudyId,
 		comments,
 		dataAdapter,
 		shapes,
@@ -157,7 +157,7 @@ export const Chessify = ({
 					<ChessgroundWrapper
 						api={chessView}
 						setApi={setChessView}
-						chessifyId={chessifyId}
+						chessStudyId={chessStudyId}
 						config={{
 							orientation: boardOrientation,
 						}}

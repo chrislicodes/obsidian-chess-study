@@ -1,6 +1,6 @@
 <!-- omit in toc -->
 
-# Chessify
+# Obsidian Chess Study
 
 > A chess study helper and PGN viewer/editor for [Obsidian](https://obsidian.md/).
 
@@ -26,23 +26,23 @@ I love [Obsidian](https://obsidian.md/) and its tools, but managing screenshots 
 
 ## Installation
 
-Once you have disabled Safe Mode, you can find third-party plugins by navigating to Settings > Community Plugins > Browse and search for "Chessify". Once you have installed the plugin, you can access it under Settings > Community Plugins. Please note that you must enable the plugin to use it. You can also unsintall the plugin from there.
+Once you have disabled Safe Mode, you can find third-party plugins by navigating to Settings > Community Plugins > Browse and search for "Chess Study". Once you have installed the plugin, you can access it under Settings > Community Plugins. Please note that you must enable the plugin to use it. You can also unsintall the plugin from there.
 
 ## Usage
 
-To start, position your cursor where you want to place the PGN viewer/editor within your note. Execute the Obsidian command `Chessify: Insert PGN-Editor at cursor position`.
+To start, position your cursor where you want to place the PGN viewer/editor within your note. Execute the Obsidian command `Chess Study: Insert PGN-Editor at cursor position`.
 
 This action will trigger a modal window, where you have the option to paste your PGN or leave it empty for a fresh new game. Here is what it will look like:
 
-![chessify-modal](imgs/chessify-modal.png)
+![chess-study-modal](imgs/chess-study-modal.png)
 
-Once you click `Submit`, Chessify will parse the PGN, generate a new JSON file in your vault located at `.obsidian/plugins/obsidian-chessify/storage/{id}.json`, and insert a chessify codeblock at the cursor's position. Here's an example of the chessify codeblock:
+Once you click `Submit`, Obsidian will parse the PGN, generate a new JSON file in your vault located at `.obsidian/plugins/obsidian-chess-study/storage/{id}.json`, and insert a chessStudy codeblock at the cursor's position. Here's an example of the chessStudy codeblock:
 
-![chessify-codeblock](imgs/chessify-codeblock.png)
+![chess-study-codeblock](imgs/chess-study-codeblock.png)
 
 After that the PGN viewer/editor will render and you are good to go:
 
-![chessify-codeblock](imgs/chessify-demo.gif)
+![cchess-study-codeblock](imgs/chess-study-demo.gif)
 
 ## Features
 
@@ -56,15 +56,15 @@ After that the PGN viewer/editor will render and you are good to go:
 
 ## Settings
 
-Here are the available settings for a `chessify` code block:
+Here are the available settings for a `chessStudy` code block:
 
 | Setting            | Possible Values    | Description                                      |
 | ------------------ | ------------------ | ------------------------------------------------ |
-| `chessifyId`       | Valid nanoid       | Valid ID for a file stored in the plugin storage |
+| `chessStudyId`     | Valid nanoid       | Valid ID for a file stored in the plugin storage |
 | `boardOrientation` | `white` \| `black` | Orientation of the board                         |
 | `boardColor`       | `green` \| `brown` | Color of the board                               |
 
-You can permanently set some settings in the [Obsidian](https://obsidian.md/) plugin settings for Chessify.
+You can permanently set some settings in the [Obsidian](https://obsidian.md/) plugin settings for Obsidian Chess Study.
 
 ## Roadmap
 
@@ -91,4 +91,4 @@ If you want to have a look at FENs instead, check out these alternative Obsidian
 
 ## License
 
-[Chessify](https://github.com/chrislicodes/obsidian-chessify) is licensed under the MIT license. Refer to [LICENSE](https://github.com/chrislicodes/obsidian-chessify/blob/trunk/LICENSE.TXT) for more informations.
+[Obsidian Chess Study](https://github.com/chrislicodes/obsidian-chess-study) is licensed under the GPL-3.0 license. Refer to [LICENSE](https://github.com/chrislicodes/obsidian-chess-study/blob/trunk/LICENSE.TXT) for more informations.

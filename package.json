@@ -1,12 +1,12 @@
 {
-	"name": "obsidian-chessify",
+	"name": "chess-study",
 	"version": "1.0.0",
 	"description": "A chess study helper and PGN viewer for Obsidian.",
 	"keywords": [
 		"chess",
 		"obsidian"
 	],
-	"license": "MIT",
+	"license": "GPL-3.0-or-later",
 	"author": "Christoph Lindstädt",
 	"main": "main.js",
 	"scripts": {

@@ -3,13 +3,13 @@ import { Editor, Notice, Plugin } from 'obsidian';
 import { ReactView } from './components/ReactView';
 import { PgnModal } from './components/obsidian/PgnModal';
 import {
-	ChessifyPluginSettings,
+	ChessStudyPluginSettings,
 	DEFAULT_SETTINGS,
 	SettingsTab,
 } from './components/obsidian/SettingsTab';
 import {
-	ChessifyDataAdapter,
-	ChessifyFileData,
+	ChessStudyDataAdapter,
+	ChessStudyFileData,
 	parseUserConfig,
 } from './utils';
 
@@ -20,9 +20,9 @@ import 'chessground/assets/chessground.brown.css';
 import 'chessground/assets/chessground.cburnett.css';
 import './main.css';
 
-export default class ChessifyPlugin extends Plugin {
-	settings: ChessifyPluginSettings;
-	dataAdapter: ChessifyDataAdapter;
+export default class ChessStudyPlugin extends Plugin {
+	settings: ChessStudyPluginSettings;
+	dataAdapter: ChessStudyDataAdapter;
 	storagePath = `${this.app.vault.configDir}/plugins/${this.manifest.id}/storage/`;
 
 	async onload() {
@@ -30,7 +30,7 @@ export default class ChessifyPlugin extends Plugin {
 		await this.loadSettings();
 
 		// Register Data Adapter
-		this.dataAdapter = new ChessifyDataAdapter(
+		this.dataAdapter = new ChessStudyDataAdapter(
 			this.app.vault.adapter,
 			this.storagePath
 		);
@@ -40,7 +40,7 @@ export default class ChessifyPlugin extends Plugin {
 
 		// Add command
 		this.addCommand({
-			id: 'insert-chesser',
+			id: 'insert-chess-study',
 			name: 'Insert PGN-Editor at cursor position',
 			editorCallback: (editor: Editor) => {
 				const cursorPosition = editor.getCursor();
@@ -56,7 +56,7 @@ export default class ChessifyPlugin extends Plugin {
 							});
 						}
 
-						const chessifyFileData: ChessifyFileData = {
+						const chessStudyFileData: ChessStudyFileData = {
 							header: {
 								title: chess.header()['opening'] || null,
 							},
@@ -68,13 +68,14 @@ export default class ChessifyPlugin extends Plugin {
 							})),
 						};
 
-						const id = await this.dataAdapter.saveFile(chessifyFileData);
+						const id = await this.dataAdapter.saveFile(chessStudyFileData);
 
 						editor.replaceRange(
-							`\`\`\`chessify\nchessifyId: ${id}\n\`\`\``,
+							`\`\`\`chessStudy\nchessStudyId: ${id}\nboardOrientation: white\nboardColor: green\n\`\`\``,
 							cursorPosition
 						);
 					} catch (e) {
+						console.log(e);
 						new Notice('There was an error during PGN parsing.', 0);
 					}
 				};
@@ -83,20 +84,20 @@ export default class ChessifyPlugin extends Plugin {
 			},
 		});
 
-		// Add chessify code block processor
+		// Add chess study code block processor
 		this.registerMarkdownCodeBlockProcessor(
-			'chessify',
+			'chessStudy',
 			async (source, el, ctx) => {
-				const { chessifyId } = parseUserConfig(this.settings, source);
+				const { chessStudyId } = parseUserConfig(this.settings, source);
 
-				if (!chessifyId.trim().length)
+				if (!chessStudyId.trim().length)
 					return new Notice(
-						"No chessifyId parameter found, please add one manually if the file already exists or add it via the 'Insert PGN-Editor at cursor position' command.",
+						"No chessStudyId parameter found, please add one manually if the file already exists or add it via the 'Insert PGN-Editor at cursor position' command.",
 						0
 					);
 
 				try {
-					const data = await this.dataAdapter.loadFile(chessifyId);
+					const data = await this.dataAdapter.loadFile(chessStudyId);
 
 					ctx.addChild(
 						new ReactView(
@@ -110,18 +111,18 @@ export default class ChessifyPlugin extends Plugin {
 					);
 				} catch (e) {
 					new Notice(
-						`There was an error while trying to load ${chessifyId}.json. You can check the plugin folder if the file exist and if not add one via the 'Insert PGN-Editor at cursor position' command.`,
+						`There was an error while trying to load ${chessStudyId}.json. You can check the plugin folder if the file exist and if not add one via the 'Insert PGN-Editor at cursor position' command.`,
 						0
 					);
 				}
 			}
 		);
 
-		console.log('Chessify successfully loaded');
+		console.log('Chess Study Plugin successfully loaded');
 	}
 
 	async onunload() {
-		console.log('Chessify successfully unloaded');
+		console.log('Chess Study Plugin successfully unloaded');
 	}
 
 	async loadSettings() {
