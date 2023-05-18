@@ -1,5 +1,5 @@
 import { Chess } from 'chess.js';
-import { Editor, Notice, Plugin } from 'obsidian';
+import { Editor, Notice, Plugin, normalizePath } from 'obsidian';
 import { ReactView } from './components/ReactView';
 import { PgnModal } from './components/obsidian/PgnModal';
 import {
@@ -23,7 +23,9 @@ import './main.css';
 export default class ChessStudyPlugin extends Plugin {
 	settings: ChessStudyPluginSettings;
 	dataAdapter: ChessStudyDataAdapter;
-	storagePath = `${this.app.vault.configDir}/plugins/${this.manifest.id}/storage/`;
+	storagePath = normalizePath(
+		`${this.app.vault.configDir}/plugins/${this.manifest.id}/storage/`
+	);
 
 	async onload() {
 		// Load Settings
@@ -34,6 +36,8 @@ export default class ChessStudyPlugin extends Plugin {
 			this.app.vault.adapter,
 			this.storagePath
 		);
+
+		this.dataAdapter.createStorageFolder();
 
 		// Add settings tab
 		this.addSettingTab(new SettingsTab(this.app, this));

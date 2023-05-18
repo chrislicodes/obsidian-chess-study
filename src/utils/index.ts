@@ -111,4 +111,12 @@ export class ChessStudyDataAdapter {
 		const data = await this.adapter.read(`${this.storagePath}/${id}.json`);
 		return JSON.parse(data);
 	}
+
+	async createStorageFolder() {
+		const folderExists = await this.adapter.exists(this.storagePath);
+
+		if (!folderExists) {
+			this.adapter.mkdir(this.storagePath);
+		}
+	}
 }
