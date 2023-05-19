@@ -1,33 +1,118 @@
-button:active {
+/* General */
+
+.chess-study button:active {
 	transform: translateY(1px);
 }
 
-.border {
+.chess-study .border {
 	border: 1px var(--color-base-10) solid;
 	border-radius: 5px;
 }
 
-.border-top {
+.chess-study .border-top {
 	border: 1px var(--color-base-10) solid;
 }
 
-.vertical-align {
+.chess-study .vertical-align {
 	display: flex;
 	align-items: center;
 }
 
-.center {
+.chess-study .center {
 	display: flex;
 	align-items: center;
 	justify-content: center;
 }
 
-.move-item {
+.chess-study .height-width-100 {
+	width: 100%;
+	height: 100%;
+}
+
+.chess-study .table {
+	display: table;
+}
+
+.chess-study {
+	line-height: 1.5;
+	-webkit-font-smoothing: antialiased;
+}
+
+.chess-study {
+	height: 100%;
+}
+
+.chess-study *,
+.chess-study *::before,
+.chess-study *::after {
+	box-sizing: border-box;
+}
+.chess-study * {
+	margin: 0;
+}
+
+.chess-study input,
+.chess-study button,
+.chess-study textarea,
+.chess-study select {
+	font: inherit;
+}
+
+.chess-study p,
+.chess-study h1,
+.chess-study h2,
+.chess-study h3,
+.chess-study h4,
+.chess-study h5,
+.chess-study h6 {
+	overflow-wrap: break-word;
+}
+
+/* Container */
+.chess-study .chessground-pgn-container {
+	display: flex;
+	height: 450px;
+}
+
+.chess-study .chessground-pgn-container .chessground-container {
+	flex: 0 0 450px;
+	height: 100%;
+}
+
+.chess-study .chessground-pgn-container .pgn-container {
+	flex: 1;
+	height: 100%;
+}
+
+/* PGN Viewer */
+.chess-study .move-item-section {
+	height: 415px;
+}
+
+.chess-study .button-section {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	gap: 4px;
+	height: 35px;
+}
+
+.chess-study .move-item-container {
+	display: grid;
+	grid-template-columns: 0.15fr 0.425fr 0.425fr;
+	grid-auto-rows: 30px;
+	width: 100%;
+	max-height: 415px;
+	overflow-y: scroll;
+}
+
+.chess-study .move-item {
 	padding-left: 8px;
 	user-select: none;
 }
 
-.move-item:hover {
+.chess-study .move-item:hover {
 	background-color: hsl(
 		var(--accent-h),
 		var(--accent-s),
@@ -37,7 +122,7 @@ button:active {
 	cursor: pointer;
 }
 
-.move-item.active {
+.chess-study .move-item.active {
 	background-color: hsl(
 		var(--accent-h),
 		var(--accent-s),
@@ -47,7 +132,7 @@ button:active {
 	font-weight: bold;
 }
 
-.move-indicator {
+.chess-study .move-indicator {
 	color: var(--color-base-60);
 	text-align: center;
 	background-color: var(--color-base-10);
@@ -55,7 +140,9 @@ button:active {
 	cursor: default;
 }
 
-.editor-input {
+/* Comment Section */
+
+.chess-study .editor-input {
 	min-height: 150px;
 	resize: none;
 	font-size: 15px;
@@ -67,62 +154,14 @@ button:active {
 	caret-color: #444;
 }
 
-.CommentSection {
+.chess-study .CommentSection {
 	height: 250px;
 	padding-top: 5px;
 	overflow: scroll;
 }
 
-.ProseMirror,
-.CommentSection > div {
+.chess-study.ProseMirror,
+.chess-study.CommentSection > div {
 	width: 100%;
 	height: 100%;
-}
-
-/*
-  Josh's Custom CSS Reset
-  https://www.joshwcomeau.com/css/custom-css-reset/
-*/
-*,
-*::before,
-*::after {
-	box-sizing: border-box;
-}
-* {
-	margin: 0;
-}
-html,
-body {
-	height: 100%;
-}
-body {
-	line-height: 1.5;
-	-webkit-font-smoothing: antialiased;
-}
-img,
-picture,
-video,
-canvas,
-svg {
-	display: block;
-	max-width: 100%;
-}
-input,
-button,
-textarea,
-select {
-	font: inherit;
-}
-p,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-	overflow-wrap: break-word;
-}
-#root,
-#__next {
-	isolation: isolate;
 }

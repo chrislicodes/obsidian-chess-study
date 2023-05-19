@@ -73,18 +73,9 @@ export const PgnViewer = React.memo(
 		const movePairs = useMemo(() => chunkArray(history, 2), [history]);
 
 		return (
-			<div style={{ width: '100%', height: '100%' }}>
-				<div style={{ height: '415px' }}>
-					<div
-						style={{
-							display: 'grid',
-							gridTemplateColumns: '0.15fr 0.425fr 0.425fr',
-							gridAutoRows: '30px',
-							width: '100%',
-							maxHeight: '415px',
-							overflowY: 'scroll',
-						}}
-					>
+			<div className="height-width-100">
+				<div className="move-item-section">
+					<div className="move-item-container">
 						{movePairs.map((pair, i) => {
 							const [wMove, bMove] = pair;
 							return (
@@ -107,16 +98,7 @@ export const PgnViewer = React.memo(
 						})}
 					</div>
 				</div>
-				<div
-					style={{
-						display: 'flex',
-						justifyContent: 'center',
-						alignItems: 'center',
-						width: '100%',
-						gap: '4px',
-						height: '35px',
-					}}
-				>
+				<div className="button-section">
 					<button onClick={() => onBackButtonClick()}>
 						<ArrowLeft />
 					</button>

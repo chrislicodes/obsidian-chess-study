@@ -114,21 +114,8 @@ export const ChessgroundWrapper = React.memo(
 		}, [api, currentMoveNumber, currentMoveShapes, setShapes]);
 
 		return (
-			<div
-				style={{
-					height: '100%',
-					width: '100%',
-				}}
-				className={`${boardColor}-board`}
-			>
-				<div
-					ref={ref}
-					style={{
-						height: '100%',
-						width: '100%',
-						display: 'table' /* hack: round to full pixel size in chrome */,
-					}}
-				/>
+			<div className={`${boardColor}-board height-width-100 table`}>
+				<div ref={ref} className={`height-width-100`} />
 			</div>
 		);
 	}

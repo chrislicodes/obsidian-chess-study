@@ -98,23 +98,25 @@ export const ChessStudy = ({
 
 	const onMoveItemClick = useCallback(
 		(moveIndex: number) => {
-			setCurrentMove(() => {
-				const move = history[moveIndex];
-				const tempChess = new Chess(move.after);
-				chessView?.set({
-					fen: move.after,
-					check: tempChess.isCheck(),
-				});
-				if (moveIndex !== history.length - 1) {
-					setIsViewOnly(true);
-				} else {
-					setIsViewOnly(false);
-				}
+			if (moveIndex !== currentMove) {
+				setCurrentMove(() => {
+					const move = history[moveIndex];
+					const tempChess = new Chess(move.after);
+					chessView?.set({
+						fen: move.after,
+						check: tempChess.isCheck(),
+					});
+					if (moveIndex !== history.length - 1) {
+						setIsViewOnly(true);
+					} else {
+						setIsViewOnly(false);
+					}
 
-				return moveIndex;
-			});
+					return moveIndex;
+				});
+			}
 		},
-		[chessView, history]
+		[chessView, currentMove, history]
 	);
 
 	const onSaveButtonClick = useCallback(async () => {
@@ -141,19 +143,9 @@ export const ChessStudy = ({
 	]);
 
 	return (
-		<div className="border">
-			<div
-				style={{
-					display: 'flex',
-					height: '450px',
-				}}
-			>
-				<div
-					style={{
-						flex: '0 0 450px',
-						height: '100%',
-					}}
-				>
+		<div className="chess-study border">
+			<div className="chessground-pgn-container">
+				<div className="chessground-container">
 					<ChessgroundWrapper
 						api={chessView}
 						setApi={setChessView}
@@ -171,7 +163,7 @@ export const ChessStudy = ({
 						currentMoveShapes={shapes[currentMove]}
 					/>
 				</div>
-				<div style={{ flex: 1, height: '100%' }}>
+				<div className="pgn-container">
 					<PgnViewer
 						history={history}
 						currentMove={currentMove}

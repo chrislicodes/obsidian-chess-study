@@ -1,7 +1,7 @@
 {
 	"name": "chess-study",
 	"version": "1.0.0",
-	"description": "A chess study helper and PGN viewer for Obsidian.",
+	"description": "A chess study helper and PGN viewer/editor.",
 	"keywords": [
 		"chess",
 		"obsidian"

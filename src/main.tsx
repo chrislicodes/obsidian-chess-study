@@ -37,7 +37,7 @@ export default class ChessStudyPlugin extends Plugin {
 			this.storagePath
 		);
 
-		this.dataAdapter.createStorageFolder();
+		this.dataAdapter.createStorageFolderIfNotExists();
 
 		// Add settings tab
 		this.addSettingTab(new SettingsTab(this.app, this));
