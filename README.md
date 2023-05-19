@@ -36,7 +36,7 @@ This action will trigger a modal window, where you have the option to paste your
 
 ![chess-study-modal](imgs/chess-study-modal.png)
 
-Once you click `Submit`, Obsidian will parse the PGN, generate a new JSON file in your vault located at `.obsidian/plugins/obsidian-chess-study/storage/{id}.json`, and insert a chessStudy codeblock at the cursor's position. Here's an example of the chessStudy codeblock:
+Once you click `Submit`, Obsidian Chess Study will parse the PGN, generate a new JSON file in your vault located at `.obsidian/plugins/obsidian-chess-study/storage/{id}.json`, and insert a chessStudy codeblock at the cursor's position. Here's an example of the chessStudy codeblock:
 
 ![chess-study-codeblock](imgs/chess-study-codeblock.png)
 
@@ -91,4 +91,4 @@ If you want to have a look at FENs instead, check out these alternative Obsidian
 
 ## License
 
-[Obsidian Chess Study](https://github.com/chrislicodes/obsidian-chess-study) is licensed under the GPL-3.0 license. Refer to [LICENSE](https://github.com/chrislicodes/obsidian-chess-study/blob/trunk/LICENSE.TXT) for more informations.
+[Obsidian Chess Study](https://github.com/chrislicodes/obsidian-chess-study) is licensed under the GPL-3.0 license. Refer to [LICENSE](https://github.com/chrislicodes/obsidian-chess-study/blob/trunk/LICENSE) for more informations.

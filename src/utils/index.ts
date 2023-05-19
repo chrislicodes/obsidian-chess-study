@@ -4,7 +4,7 @@ import { Api } from 'chessground/api';
 import { Config } from 'chessground/config';
 import { DrawShape } from 'chessground/draw';
 import { nanoid } from 'nanoid';
-import { DataAdapter, parseYaml } from 'obsidian';
+import { DataAdapter, normalizePath, parseYaml } from 'obsidian';
 import { ChessStudyPluginSettings } from 'src/components/obsidian/SettingsTab';
 
 //Chess Logic
@@ -99,7 +99,7 @@ export class ChessStudyDataAdapter {
 	async saveFile(data: ChessStudyFileData, id?: string) {
 		const chessStudyId = id || nanoid();
 		await this.adapter.write(
-			`${this.storagePath}/${chessStudyId}.json`,
+			normalizePath(`${this.storagePath}/${chessStudyId}.json`),
 			JSON.stringify(data, null, 2),
 			{}
 		);
@@ -108,7 +108,9 @@ export class ChessStudyDataAdapter {
 	}
 
 	async loadFile(id: string): Promise<ChessStudyFileData> {
-		const data = await this.adapter.read(`${this.storagePath}/${id}.json`);
+		const data = await this.adapter.read(
+			normalizePath(`${this.storagePath}/${id}.json`)
+		);
 		return JSON.parse(data);
 	}
 
