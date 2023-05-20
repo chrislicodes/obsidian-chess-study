@@ -6,14 +6,14 @@ import { App, Notice } from 'obsidian';
 import * as React from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { ChessStudyPluginSettings } from 'src/components/obsidian/SettingsTab';
-
 import { parseUserConfig } from 'src/lib/obsidian';
 import { ChessStudyDataAdapter, ChessStudyFileData } from 'src/lib/storage';
-import { ChessGroundSettings, ChessgroundWrapper } from './ChessgroundWrapper';
+import { useImmerReducer } from 'use-immer';
+import { ChessgroundProps, ChessgroundWrapper } from './ChessgroundWrapper';
 import { CommentSection } from './CommentSection';
 import { PgnViewer } from './PgnViewer';
 
-export type ChessStudyConfig = ChessGroundSettings;
+export type ChessStudyConfig = ChessgroundProps;
 
 interface AppProps {
 	source: string;
@@ -22,6 +22,19 @@ interface AppProps {
 	chessStudyData: ChessStudyFileData;
 	dataAdapter: ChessStudyDataAdapter;
 }
+
+interface GameState {
+	currentMove: number;
+	isViewOnly: boolean;
+	study: ChessStudyFileData;
+}
+
+type GameActions =
+	| { type: 'DISPLAY_NEXT_MOVE_IN_HISTORY' }
+	| { type: 'DISPLAY_PREVIOUS_MOVE_IN_HISTORY' }
+	| { type: 'DISPLAY_SELECTED_MOVE_IN_HISTORY'; moveNumber: number }
+	| { type: 'SYNC_CURRENT_MOVE'; moveNumber: number }
+	| { type: 'ADD_MOVE_TO_HISTORY'; move: Move };
 
 export const ChessStudy = ({
 	source,
@@ -52,69 +65,104 @@ export const ChessStudy = ({
 		return chess;
 	}, [chessStudyData.moves]);
 
-	// Track Application State
-	const [history, setHistory] = useState<Move[]>([]);
-	const [isViewOnly, setIsViewOnly] = useState<boolean>(false);
-	const [currentMove, setCurrentMove] = useState<number>(0);
+	const [gameState, dispatch] = useImmerReducer<GameState, GameActions>(
+		(draft, action) => {
+			switch (action.type) {
+				case 'DISPLAY_NEXT_MOVE_IN_HISTORY': {
+					const currentMove = draft.currentMove;
+					const moves = draft.study.moves;
+
+					if (currentMove < moves.length - 1) {
+						const move = moves[currentMove + 1];
+						const tempChessLogic = new Chess(move.after);
+
+						chessView?.set({
+							fen: move.after,
+							check: tempChessLogic.isCheck(),
+						});
+
+						draft.currentMove = currentMove + 1;
+
+						if (currentMove + 1 === moves.length - 1) draft.isViewOnly = false;
+					}
+
+					return draft;
+				}
+				case 'DISPLAY_PREVIOUS_MOVE_IN_HISTORY': {
+					const currentMove = draft.currentMove;
+					const moves = draft.study.moves;
+
+					if (currentMove >= 0) {
+						const move = moves[currentMove];
+						const tempChessLogic = new Chess(move.before);
+
+						chessView?.set({
+							fen: move.before,
+							check: tempChessLogic.isCheck(),
+						});
+
+						draft.isViewOnly = true;
+						draft.currentMove = currentMove - 1;
+					}
+
+					return draft;
+				}
+				case 'DISPLAY_SELECTED_MOVE_IN_HISTORY': {
+					const currentMove = draft.currentMove;
+					const moves = draft.study.moves;
+
+					const moveIndex = action.moveNumber;
+
+					if (moveIndex !== currentMove) {
+						const move = moves[moveIndex];
+						const tempChess = new Chess(move.after);
+
+						chessView?.set({
+							fen: move.after,
+							check: tempChess.isCheck(),
+						});
+
+						if (moveIndex !== moves.length - 1) {
+							draft.isViewOnly = true;
+						} else {
+							draft.isViewOnly = false;
+						}
+
+						draft.currentMove = moveIndex;
+					}
+
+					return draft;
+				}
+				case 'SYNC_CURRENT_MOVE': {
+					draft.currentMove = action.moveNumber;
+					return draft;
+				}
+				case 'ADD_MOVE_TO_HISTORY': {
+					const move = action.move;
+
+					draft.study.moves.push({
+						...move,
+						variants: [],
+						shapes: [],
+						comment: null,
+					});
+
+					draft.currentMove = draft.currentMove + 1;
+
+					return draft;
+				}
+				default:
+					break;
+			}
+		},
+		{ currentMove: 0, isViewOnly: false, study: chessStudyData }
+	);
+
 	const [shapes, setShapes] = useState<DrawShape[][]>(
 		chessStudyData.moves.map((data) => data.shapes)
 	);
 	const [comments, setComments] = useState<(JSONContent | null)[]>(
 		chessStudyData.moves.map((data) => data.comment)
-	);
-
-	//PgnViewer Functions
-	const onBackButtonClick = useCallback(() => {
-		if (currentMove >= 0) {
-			setCurrentMove((currentMove) => {
-				const move = history[currentMove];
-				const tempChess = new Chess(move.before);
-				chessView?.set({
-					fen: move.before,
-					check: tempChess.isCheck(),
-				});
-				setIsViewOnly(true);
-				return currentMove - 1;
-			});
-		}
-	}, [chessView, currentMove, history]);
-
-	const onForwardButtonClick = useCallback(() => {
-		if (currentMove < history.length - 1) {
-			setCurrentMove((currentMove) => {
-				const move = history[currentMove + 1];
-				const tempChess = new Chess(move.after);
-				chessView?.set({
-					fen: move.after,
-					check: tempChess.isCheck(),
-				});
-				if (currentMove + 1 === history.length - 1) setIsViewOnly(false);
-				return currentMove + 1;
-			});
-		}
-	}, [currentMove, chessView, history]);
-
-	const onMoveItemClick = useCallback(
-		(moveIndex: number) => {
-			if (moveIndex !== currentMove) {
-				setCurrentMove(() => {
-					const move = history[moveIndex];
-					const tempChess = new Chess(move.after);
-					chessView?.set({
-						fen: move.after,
-						check: tempChess.isCheck(),
-					});
-					if (moveIndex !== history.length - 1) {
-						setIsViewOnly(true);
-					} else {
-						setIsViewOnly(false);
-					}
-
-					return moveIndex;
-				});
-			}
-		},
-		[chessView, currentMove, history]
 	);
 
 	const onSaveButtonClick = useCallback(async () => {
@@ -153,29 +201,42 @@ export const ChessStudy = ({
 						}}
 						boardColor={boardColor}
 						chess={chessLogic}
-						setHistory={setHistory}
-						setMoveNumber={setCurrentMove}
-						isViewOnly={isViewOnly}
+						addMoveToHistory={(move: Move) =>
+							dispatch({ type: 'ADD_MOVE_TO_HISTORY', move })
+						}
+						setMoveNumber={(moveNumber: number) =>
+							dispatch({ type: 'SYNC_CURRENT_MOVE', moveNumber: moveNumber })
+						}
+						isViewOnly={gameState.isViewOnly}
 						setShapes={setShapes}
-						currentMoveNumber={currentMove}
-						currentMoveShapes={shapes[currentMove]}
+						currentMoveNumber={gameState.currentMove}
+						currentMoveShapes={shapes[gameState.currentMove]}
 					/>
 				</div>
 				<div className="pgn-container">
 					<PgnViewer
-						history={history}
-						currentMove={currentMove}
-						onBackButtonClick={onBackButtonClick}
-						onForwardButtonClick={onForwardButtonClick}
-						onMoveItemClick={onMoveItemClick}
+						history={gameState.study.moves}
+						currentMove={gameState.currentMove}
+						onBackButtonClick={() =>
+							dispatch({ type: 'DISPLAY_PREVIOUS_MOVE_IN_HISTORY' })
+						}
+						onForwardButtonClick={() =>
+							dispatch({ type: 'DISPLAY_NEXT_MOVE_IN_HISTORY' })
+						}
+						onMoveItemClick={(moveNumber: number) =>
+							dispatch({
+								type: 'DISPLAY_SELECTED_MOVE_IN_HISTORY',
+								moveNumber: moveNumber,
+							})
+						}
 						onSaveButtonClick={onSaveButtonClick}
 					/>
 				</div>
 			</div>
 			<div className="CommentSection border-top">
 				<CommentSection
-					currentMove={currentMove}
-					currentComment={comments[currentMove]}
+					currentMove={gameState.currentMove}
+					currentComment={comments[gameState.currentMove]}
 					setComments={setComments}
 				/>
 			</div>

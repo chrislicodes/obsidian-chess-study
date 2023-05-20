@@ -8,14 +8,14 @@ import { Config } from 'chessground/config';
 import { DrawShape } from 'chessground/draw';
 import { playOtherSide, toColor, toDests } from 'src/lib/chess-logic';
 
-export interface ChessGroundSettings {
+export interface ChessgroundProps {
 	api: Api | null;
 	setApi: React.Dispatch<React.SetStateAction<Api>>;
 	chessStudyId: string;
 	config?: Config;
 	boardColor?: 'brown' | 'green';
 	chess: Chess;
-	setHistory: React.Dispatch<React.SetStateAction<Move[]>>;
+	addMoveToHistory: React.Dispatch<React.SetStateAction<Move>>;
 	setShapes: React.Dispatch<React.SetStateAction<DrawShape[][]>>;
 	setMoveNumber: React.Dispatch<React.SetStateAction<number>>;
 	currentMoveNumber: number;
@@ -31,13 +31,13 @@ export const ChessgroundWrapper = React.memo(
 		boardColor = 'green',
 		config = {},
 		chess,
-		setHistory,
+		addMoveToHistory,
 		setMoveNumber,
 		currentMoveNumber,
 		setShapes,
 		isViewOnly,
 		currentMoveShapes,
-	}: ChessGroundSettings) => {
+	}: ChessgroundProps) => {
 		const ref = useRef<HTMLDivElement>(null);
 
 		//Chessground Init
@@ -56,8 +56,7 @@ export const ChessgroundWrapper = React.memo(
 							after: (orig, dest, _metadata) => {
 								const handler = playOtherSide(chessgroundApi, chess);
 
-								setHistory(handler(orig, dest));
-								setMoveNumber((state) => state + 1);
+								addMoveToHistory(handler(orig, dest));
 							},
 						},
 					},
@@ -68,7 +67,6 @@ export const ChessgroundWrapper = React.memo(
 					...config,
 				});
 
-				setHistory(chess.history({ verbose: true }));
 				setApi(chessgroundApi);
 				setMoveNumber(chess.history().length - 1);
 			} else if (ref.current && api) {
@@ -81,10 +79,10 @@ export const ChessgroundWrapper = React.memo(
 			chessStudyId,
 			config,
 			setApi,
-			setHistory,
 			setMoveNumber,
 			setShapes,
 			currentMoveNumber,
+			addMoveToHistory,
 		]);
 
 		//Sync View Only

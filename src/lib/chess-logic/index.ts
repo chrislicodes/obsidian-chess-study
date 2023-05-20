@@ -42,6 +42,6 @@ export function playOtherSide(cg: Api, chess: Chess) {
 			cg.set(commonTurnProperties);
 		}
 
-		return chess.history({ verbose: true });
+		return move;
 	};
 }

@@ -9,6 +9,7 @@ interface ChessStudyMove extends Move {
 	shapes: DrawShape[];
 	comment: JSONContent | null;
 }
+
 export interface ChessStudyFileData {
 	header: { title: string | null };
 	moves: ChessStudyMove[];
