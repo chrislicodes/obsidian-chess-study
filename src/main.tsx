@@ -1,5 +1,6 @@
 import { Chess } from 'chess.js';
 import { Editor, Notice, Plugin, normalizePath } from 'obsidian';
+import { ChessStudyDataAdapter, ChessStudyFileData } from 'src/lib/storage';
 import { ReactView } from './components/ReactView';
 import { PgnModal } from './components/obsidian/PgnModal';
 import {
@@ -7,17 +8,13 @@ import {
 	DEFAULT_SETTINGS,
 	SettingsTab,
 } from './components/obsidian/SettingsTab';
-import {
-	ChessStudyDataAdapter,
-	ChessStudyFileData,
-	parseUserConfig,
-} from './utils';
 
 // these styles must be imported somewhere
 import 'assets/board/green.css';
 import 'chessground/assets/chessground.base.css';
 import 'chessground/assets/chessground.brown.css';
 import 'chessground/assets/chessground.cburnett.css';
+import { parseUserConfig } from './lib/obsidian';
 import './main.css';
 
 export default class ChessStudyPlugin extends Plugin {

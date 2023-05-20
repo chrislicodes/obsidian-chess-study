@@ -6,7 +6,7 @@ import { Chess, Move } from 'chess.js';
 import { Api } from 'chessground/api';
 import { Config } from 'chessground/config';
 import { DrawShape } from 'chessground/draw';
-import { playOtherSide, toColor, toDests } from 'src/utils';
+import { playOtherSide, toColor, toDests } from 'src/lib/chess-logic';
 
 export interface ChessGroundSettings {
 	api: Api | null;

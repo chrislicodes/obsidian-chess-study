@@ -6,11 +6,9 @@ import { App, Notice } from 'obsidian';
 import * as React from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { ChessStudyPluginSettings } from 'src/components/obsidian/SettingsTab';
-import {
-	ChessStudyDataAdapter,
-	ChessStudyFileData,
-	parseUserConfig,
-} from 'src/utils';
+
+import { parseUserConfig } from 'src/lib/obsidian';
+import { ChessStudyDataAdapter, ChessStudyFileData } from 'src/lib/storage';
 import { ChessGroundSettings, ChessgroundWrapper } from './ChessgroundWrapper';
 import { CommentSection } from './CommentSection';
 import { PgnViewer } from './PgnViewer';
