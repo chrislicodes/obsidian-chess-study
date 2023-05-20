@@ -11,32 +11,26 @@ import { playOtherSide, toColor, toDests } from 'src/lib/chess-logic';
 export interface ChessgroundProps {
 	api: Api | null;
 	setApi: React.Dispatch<React.SetStateAction<Api>>;
-	chessStudyId: string;
+	chess: Chess;
+	addMoveToHistory: (move: Move) => void;
+	syncShapes: (shapes: DrawShape[]) => void;
+	isViewOnly: boolean;
+	shapes: DrawShape[];
 	config?: Config;
 	boardColor?: 'brown' | 'green';
-	chess: Chess;
-	addMoveToHistory: React.Dispatch<React.SetStateAction<Move>>;
-	setShapes: React.Dispatch<React.SetStateAction<DrawShape[][]>>;
-	setMoveNumber: React.Dispatch<React.SetStateAction<number>>;
-	currentMoveNumber: number;
-	isViewOnly: boolean;
-	currentMoveShapes: DrawShape[];
 }
 
 export const ChessgroundWrapper = React.memo(
 	({
 		api,
 		setApi,
-		chessStudyId,
-		boardColor = 'green',
-		config = {},
 		chess,
 		addMoveToHistory,
-		setMoveNumber,
-		currentMoveNumber,
-		setShapes,
+		syncShapes: setShapes,
 		isViewOnly,
-		currentMoveShapes,
+		shapes,
+		boardColor = 'green',
+		config = {},
 	}: ChessgroundProps) => {
 		const ref = useRef<HTMLDivElement>(null);
 
@@ -68,22 +62,10 @@ export const ChessgroundWrapper = React.memo(
 				});
 
 				setApi(chessgroundApi);
-				setMoveNumber(chess.history().length - 1);
 			} else if (ref.current && api) {
 				api.set(config);
 			}
-		}, [
-			ref,
-			chess,
-			api,
-			chessStudyId,
-			config,
-			setApi,
-			setMoveNumber,
-			setShapes,
-			currentMoveNumber,
-			addMoveToHistory,
-		]);
+		}, [addMoveToHistory, api, chess, config, setApi]);
 
 		//Sync View Only
 		useEffect(() => {
@@ -94,22 +76,19 @@ export const ChessgroundWrapper = React.memo(
 		useEffect(() => {
 			api?.set({
 				drawable: {
-					onChange(shapes) {
-						setShapes((currentShapes) => {
-							const shapesModified = [...currentShapes];
-							shapesModified[currentMoveNumber] = shapes;
-
-							return shapesModified;
-						});
+					onChange: (shapes) => {
+						setShapes(shapes);
 					},
 				},
 			});
-		}, [api, currentMoveNumber, setShapes]);
+		}, [api, setShapes]);
 
-		//Load Shapes
+		// Load Shapes
 		useEffect(() => {
-			if (currentMoveShapes) api?.setShapes(currentMoveShapes);
-		}, [api, currentMoveNumber, currentMoveShapes, setShapes]);
+			if (shapes) {
+				api?.setShapes([...shapes]);
+			}
+		}, [api, shapes]);
 
 		return (
 			<div className={`${boardColor}-board height-width-100 table`}>

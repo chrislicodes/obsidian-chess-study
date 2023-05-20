@@ -159,8 +159,8 @@
 	overflow: scroll;
 }
 
-.chess-study.ProseMirror,
-.chess-study.CommentSection > div {
+.chess-study .ProseMirror,
+.chess-study .CommentSection > div {
 	width: 100%;
 	height: 100%;
 }

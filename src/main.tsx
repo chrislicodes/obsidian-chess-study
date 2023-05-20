@@ -14,6 +14,7 @@ import 'assets/board/green.css';
 import 'chessground/assets/chessground.base.css';
 import 'chessground/assets/chessground.brown.css';
 import 'chessground/assets/chessground.cburnett.css';
+import { nanoid } from 'nanoid';
 import { parseUserConfig } from './lib/obsidian';
 import './main.css';
 
@@ -63,6 +64,7 @@ export default class ChessStudyPlugin extends Plugin {
 							},
 							moves: chess.history({ verbose: true }).map((move) => ({
 								...move,
+								moveId: nanoid(),
 								variants: [],
 								shapes: [],
 								comment: null,
@@ -72,7 +74,7 @@ export default class ChessStudyPlugin extends Plugin {
 						const id = await this.dataAdapter.saveFile(chessStudyFileData);
 
 						editor.replaceRange(
-							`\`\`\`chessStudy\nchessStudyId: ${id}\nboardOrientation: white\nboardColor: green\n\`\`\``,
+							`\`\`\`chessStudy\nchessStudyId: ${id}\n\`\`\``,
 							cursorPosition
 						);
 					} catch (e) {

@@ -2,6 +2,7 @@ import { JSONContent } from '@tiptap/react';
 import { Chess, Move } from 'chess.js';
 import { Api } from 'chessground/api';
 import { DrawShape } from 'chessground/draw';
+import { nanoid } from 'nanoid';
 import { App, Notice } from 'obsidian';
 import * as React from 'react';
 import { useCallback, useMemo, useState } from 'react';
@@ -25,6 +26,7 @@ interface AppProps {
 
 interface GameState {
 	currentMove: number;
+	currentMoveId: string;
 	isViewOnly: boolean;
 	study: ChessStudyFileData;
 }
@@ -33,7 +35,9 @@ type GameActions =
 	| { type: 'DISPLAY_NEXT_MOVE_IN_HISTORY' }
 	| { type: 'DISPLAY_PREVIOUS_MOVE_IN_HISTORY' }
 	| { type: 'DISPLAY_SELECTED_MOVE_IN_HISTORY'; moveNumber: number }
-	| { type: 'SYNC_CURRENT_MOVE'; moveNumber: number }
+	| { type: 'SYNC_CURRENT_MOVE_ID'; moveId: string }
+	| { type: 'SYNC_SHAPES'; shapes: DrawShape[] }
+	| { type: 'SYNC_COMMENT'; comment: JSONContent | null }
 	| { type: 'ADD_MOVE_TO_HISTORY'; move: Move };
 
 export const ChessStudy = ({
@@ -47,8 +51,6 @@ export const ChessStudy = ({
 		pluginSettings,
 		source
 	);
-
-	const [chessStudyDataModified] = useState(chessStudyData);
 
 	// Setup Chessboard and Chess.js APIs
 	const [chessView, setChessView] = useState<Api | null>(null);
@@ -69,11 +71,14 @@ export const ChessStudy = ({
 		(draft, action) => {
 			switch (action.type) {
 				case 'DISPLAY_NEXT_MOVE_IN_HISTORY': {
-					const currentMove = draft.currentMove;
+					const currentMoveId = draft.currentMoveId;
 					const moves = draft.study.moves;
+					const moveIndex = draft.study.moves.findIndex(
+						(move) => move.moveId === currentMoveId
+					);
 
-					if (currentMove < moves.length - 1) {
-						const move = moves[currentMove + 1];
+					if (moveIndex < moves.length - 1) {
+						const move = moves[moveIndex + 1];
 						const tempChessLogic = new Chess(move.after);
 
 						chessView?.set({
@@ -81,9 +86,10 @@ export const ChessStudy = ({
 							check: tempChessLogic.isCheck(),
 						});
 
-						draft.currentMove = currentMove + 1;
+						draft.currentMove = moveIndex + 1;
+						draft.currentMoveId = moves[moveIndex + 1].moveId;
 
-						if (currentMove + 1 === moves.length - 1) draft.isViewOnly = false;
+						if (moveIndex + 1 === moves.length - 1) draft.isViewOnly = false;
 					}
 
 					return draft;
@@ -103,6 +109,7 @@ export const ChessStudy = ({
 
 						draft.isViewOnly = true;
 						draft.currentMove = currentMove - 1;
+						draft.currentMoveId = moves[currentMove - 1]?.moveId || '';
 					}
 
 					return draft;
@@ -133,8 +140,23 @@ export const ChessStudy = ({
 
 					return draft;
 				}
-				case 'SYNC_CURRENT_MOVE': {
-					draft.currentMove = action.moveNumber;
+
+				case 'SYNC_SHAPES': {
+					const currentMove = draft.currentMove;
+					const moves = draft.study.moves;
+					const move = moves[currentMove];
+
+					move.shapes = action.shapes;
+
+					return draft;
+				}
+				case 'SYNC_COMMENT': {
+					const currentMove = draft.currentMove;
+					const moves = draft.study.moves;
+					const move = moves[currentMove];
+
+					move.comment = action.comment;
+
 					return draft;
 				}
 				case 'ADD_MOVE_TO_HISTORY': {
@@ -142,6 +164,7 @@ export const ChessStudy = ({
 
 					draft.study.moves.push({
 						...move,
+						moveId: nanoid(),
 						variants: [],
 						shapes: [],
 						comment: null,
@@ -155,38 +178,23 @@ export const ChessStudy = ({
 					break;
 			}
 		},
-		{ currentMove: 0, isViewOnly: false, study: chessStudyData }
-	);
-
-	const [shapes, setShapes] = useState<DrawShape[][]>(
-		chessStudyData.moves.map((data) => data.shapes)
-	);
-	const [comments, setComments] = useState<(JSONContent | null)[]>(
-		chessStudyData.moves.map((data) => data.comment)
+		{
+			currentMove: chessStudyData.moves.length - 1,
+			currentMoveId:
+				chessStudyData.moves[chessStudyData.moves.length - 1]?.moveId,
+			isViewOnly: false,
+			study: chessStudyData,
+		}
 	);
 
 	const onSaveButtonClick = useCallback(async () => {
-		const chessStudyData: ChessStudyFileData = {
-			header: chessStudyDataModified.header,
-			moves: chessLogic.history({ verbose: true }).map((move, index) => ({
-				...move,
-				variants: [],
-				shapes: shapes[index],
-				comment: comments[index],
-			})),
-		};
-
-		await dataAdapter.saveFile(chessStudyData, chessStudyId);
-
-		new Notice('Save successfull!');
-	}, [
-		chessLogic,
-		chessStudyDataModified.header,
-		chessStudyId,
-		comments,
-		dataAdapter,
-		shapes,
-	]);
+		try {
+			await dataAdapter.saveFile(gameState.study, chessStudyId);
+			new Notice('Save successfull!');
+		} catch (e) {
+			new Notice('Something went wrong during saving:', e);
+		}
+	}, [chessStudyId, dataAdapter, gameState.study]);
 
 	return (
 		<div className="chess-study border">
@@ -195,7 +203,6 @@ export const ChessStudy = ({
 					<ChessgroundWrapper
 						api={chessView}
 						setApi={setChessView}
-						chessStudyId={chessStudyId}
 						config={{
 							orientation: boardOrientation,
 						}}
@@ -204,13 +211,11 @@ export const ChessStudy = ({
 						addMoveToHistory={(move: Move) =>
 							dispatch({ type: 'ADD_MOVE_TO_HISTORY', move })
 						}
-						setMoveNumber={(moveNumber: number) =>
-							dispatch({ type: 'SYNC_CURRENT_MOVE', moveNumber: moveNumber })
-						}
 						isViewOnly={gameState.isViewOnly}
-						setShapes={setShapes}
-						currentMoveNumber={gameState.currentMove}
-						currentMoveShapes={shapes[gameState.currentMove]}
+						syncShapes={(shapes: DrawShape[]) =>
+							dispatch({ type: 'SYNC_SHAPES', shapes })
+						}
+						shapes={gameState.study.moves[gameState.currentMove]?.shapes}
 					/>
 				</div>
 				<div className="pgn-container">
@@ -236,8 +241,10 @@ export const ChessStudy = ({
 			<div className="CommentSection border-top">
 				<CommentSection
 					currentMove={gameState.currentMove}
-					currentComment={comments[gameState.currentMove]}
-					setComments={setComments}
+					currentComment={gameState.study.moves[gameState.currentMove]?.comment}
+					setComments={(comment: JSONContent) =>
+						dispatch({ type: 'SYNC_COMMENT', comment: comment })
+					}
 				/>
 			</div>
 		</div>
