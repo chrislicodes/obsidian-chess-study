@@ -256,23 +256,49 @@ export const ChessStudy = ({
 
 					return draft;
 				}
-
 				case 'SYNC_SHAPES': {
-					// const currentMove = draft.currentMove;
-					// const moves = draft.study.moves;
-					// const move = moves[currentMove];
+					const currentMoveId = draft.currentMove.moveId;
+					const moves = draft.study.moves;
 
-					// move.shapes = action.shapes;
+					const { variant, moveIndex } = findMoveIndex(moves, currentMoveId);
+
+					if (variant) {
+						const move =
+							moves[variant.parentMoveIndex].variants[variant.variantIndex]
+								.moves[moveIndex];
+						move.shapes = action.shapes;
+
+						draft.currentMove = move;
+					} else {
+						const move = moves[moveIndex];
+						move.shapes = action.shapes;
+
+						draft.currentMove = move;
+					}
 
 					return draft;
 				}
 				case 'SYNC_COMMENT': {
-					// const currentMove = draft.currentMove;
-					// const moves = draft.study.moves;
-					// const move = moves[currentMove];
+					const currentMoveId = draft.currentMove.moveId;
+					const moves = draft.study.moves;
 
-					// move.comment = action.comment;
+					const { variant, moveIndex } = findMoveIndex(moves, currentMoveId);
 
+					if (variant) {
+						const move =
+							moves[variant.parentMoveIndex].variants[variant.variantIndex]
+								.moves[moveIndex];
+						move.comment = action.comment;
+
+						draft.currentMove = move;
+					} else {
+						const move = moves[moveIndex];
+						move.comment = action.comment;
+
+						draft.currentMove = move;
+					}
+
+					return draft;
 					return draft;
 				}
 				case 'ADD_MOVE_TO_HISTORY': {
