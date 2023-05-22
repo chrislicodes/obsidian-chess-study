@@ -4,13 +4,13 @@ import { DrawShape } from 'chessground/draw';
 import { nanoid } from 'nanoid';
 import { DataAdapter, normalizePath } from 'obsidian';
 
-interface VariantMove extends Move {
+export interface VariantMove extends Move {
 	moveId: string;
 	shapes: DrawShape[];
 	comment: JSONContent | null;
 }
 
-interface Variant {
+export interface Variant {
 	variantId: string;
 	parentMoveId: string;
 	moves: VariantMove[];

@@ -4,7 +4,6 @@ import * as React from 'react';
 import { useEffect } from 'react';
 
 interface CommentSectionProps {
-	currentMove: number;
 	currentComment: JSONContent | null;
 	setComments: (comment: JSONContent) => void;
 }
