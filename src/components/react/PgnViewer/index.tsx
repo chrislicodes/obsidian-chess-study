@@ -1,7 +1,7 @@
-import { Move } from 'chess.js';
 import { ArrowLeft, ArrowRight, Save } from 'lucide-react';
 import * as React from 'react';
 import { useEffect, useMemo, useRef } from 'react';
+import { ChessStudyMove } from 'src/lib/storage';
 
 const chunkArray = <T,>(array: T[], chunkSize: number) => {
 	return array.reduce((resultArray, item, index) => {
@@ -57,17 +57,17 @@ const MoveItem = ({
 export const PgnViewer = React.memo(
 	({
 		history,
-		currentMove,
+		currentMoveId,
 		onBackButtonClick,
 		onForwardButtonClick,
 		onMoveItemClick,
 		onSaveButtonClick,
 	}: {
-		history: Move[];
-		currentMove: number;
+		history: ChessStudyMove[];
+		currentMoveId: string;
 		onBackButtonClick: () => void;
 		onForwardButtonClick: () => void;
-		onMoveItemClick: (moveIndex: number) => void;
+		onMoveItemClick: (moveId: string) => void;
 		onSaveButtonClick: () => void;
 	}) => {
 		const movePairs = useMemo(() => chunkArray(history, 2), [history]);
@@ -83,16 +83,49 @@ export const PgnViewer = React.memo(
 									<p className="move-indicator center">{i + 1}</p>
 									<MoveItem
 										san={wMove.san}
-										isCurrentMove={i * 2 === currentMove}
-										onMoveItemClick={() => onMoveItemClick(i * 2)}
+										isCurrentMove={wMove.moveId === currentMoveId}
+										onMoveItemClick={() => onMoveItemClick(wMove.moveId)}
 									/>
 									{bMove && (
 										<MoveItem
 											san={bMove.san}
-											isCurrentMove={i * 2 + 1 === currentMove}
-											onMoveItemClick={() => onMoveItemClick(i * 2 + 1)}
+											isCurrentMove={bMove.moveId === currentMoveId}
+											onMoveItemClick={() => onMoveItemClick(bMove.moveId)}
 										/>
 									)}
+
+									{/* Add Variants */}
+									<div
+										style={{
+											gridColumn: 'span 3',
+											display: 'flex',
+											flexDirection: 'column',
+										}}
+									>
+										{wMove.variants
+											.concat(bMove?.variants || [])
+											.map((variant, i) => {
+												return (
+													<div key={'sd'}>
+														{variant.moves.map((move) => (
+															<span
+																style={{
+																	cursor: 'pointer',
+																	color:
+																		move.moveId === currentMoveId
+																			? 'red'
+																			: 'unset',
+																}}
+																onClick={() => onMoveItemClick(move.moveId)}
+																key={move.before}
+															>
+																{move.san}
+															</span>
+														))}
+													</div>
+												);
+											})}
+									</div>
 								</React.Fragment>
 							);
 						})}

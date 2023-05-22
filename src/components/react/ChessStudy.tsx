@@ -7,8 +7,13 @@ import { App, Notice } from 'obsidian';
 import * as React from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { ChessStudyPluginSettings } from 'src/components/obsidian/SettingsTab';
+import { playOtherSide, toColor, toDests } from 'src/lib/chess-logic';
 import { parseUserConfig } from 'src/lib/obsidian';
-import { ChessStudyDataAdapter, ChessStudyFileData } from 'src/lib/storage';
+import {
+	ChessStudyDataAdapter,
+	ChessStudyFileData,
+	ChessStudyMove,
+} from 'src/lib/storage';
 import { useImmerReducer } from 'use-immer';
 import { ChessgroundProps, ChessgroundWrapper } from './ChessgroundWrapper';
 import { CommentSection } from './CommentSection';
@@ -27,18 +32,47 @@ interface AppProps {
 interface GameState {
 	currentMove: number;
 	currentMoveId: string;
+	// put here the actual current move
 	isViewOnly: boolean;
 	study: ChessStudyFileData;
+}
+
+interface MovePosition {
+	variant: { parentMoveIndex: number; variantIndex: number } | null;
+	moveIndex: number;
 }
 
 type GameActions =
 	| { type: 'DISPLAY_NEXT_MOVE_IN_HISTORY' }
 	| { type: 'DISPLAY_PREVIOUS_MOVE_IN_HISTORY' }
-	| { type: 'DISPLAY_SELECTED_MOVE_IN_HISTORY'; moveNumber: number }
+	| { type: 'DISPLAY_SELECTED_MOVE_IN_HISTORY'; moveId: string }
 	| { type: 'SYNC_CURRENT_MOVE_ID'; moveId: string }
 	| { type: 'SYNC_SHAPES'; shapes: DrawShape[] }
 	| { type: 'SYNC_COMMENT'; comment: JSONContent | null }
 	| { type: 'ADD_MOVE_TO_HISTORY'; move: Move };
+
+const findMoveIndex = (
+	moves: ChessStudyMove[],
+	moveId: string
+): MovePosition => {
+	for (const [iMainLine, move] of moves.entries()) {
+		if (move.moveId === moveId) return { variant: null, moveIndex: iMainLine };
+
+		for (const [iVariant, variant] of move.variants.entries()) {
+			const moveIndex = variant.moves.findIndex(
+				(move) => move.moveId === moveId
+			);
+
+			if (moveIndex >= 0)
+				return {
+					variant: { parentMoveIndex: iMainLine, variantIndex: iVariant },
+					moveIndex: moveIndex,
+				};
+		}
+	}
+
+	return { variant: null, moveIndex: -1 };
+};
 
 export const ChessStudy = ({
 	source,
@@ -52,8 +86,6 @@ export const ChessStudy = ({
 		source
 	);
 
-	// Setup Chessboard and Chess.js APIs
-	const [chessView, setChessView] = useState<Api | null>(null);
 	const chessLogic = useMemo(() => {
 		const chess = new Chess();
 
@@ -67,75 +99,166 @@ export const ChessStudy = ({
 		return chess;
 	}, [chessStudyData.moves]);
 
+	// Setup Chessboard and Chess.js APIs
+	const [chessView, setChessView] = useState<Api | null>(null);
+
+	//? Maybe remodel all of the moves as a tree
 	const [gameState, dispatch] = useImmerReducer<GameState, GameActions>(
 		(draft, action) => {
 			switch (action.type) {
 				case 'DISPLAY_NEXT_MOVE_IN_HISTORY': {
+					//TODO: chess.js
 					const currentMoveId = draft.currentMoveId;
 					const moves = draft.study.moves;
-					const moveIndex = draft.study.moves.findIndex(
-						(move) => move.moveId === currentMoveId
-					);
 
-					if (moveIndex < moves.length - 1) {
-						const move = moves[moveIndex + 1];
-						const tempChessLogic = new Chess(move.after);
+					const { variant, moveIndex } = findMoveIndex(moves, currentMoveId);
 
-						chessView?.set({
-							fen: move.after,
-							check: tempChessLogic.isCheck(),
-						});
+					if (variant) {
+						const variantMoves =
+							moves[variant.parentMoveIndex].variants[variant.variantIndex]
+								.moves;
 
-						draft.currentMove = moveIndex + 1;
-						draft.currentMoveId = moves[moveIndex + 1].moveId;
+						if (moveIndex < variantMoves.length - 1) {
+							const move = variantMoves[moveIndex + 1];
+							const tempChessLogic = new Chess(move.after);
 
-						if (moveIndex + 1 === moves.length - 1) draft.isViewOnly = false;
+							chessView?.set({
+								fen: move.after,
+								check: tempChessLogic.isCheck(),
+							});
+
+							draft.currentMove = moveIndex + 1;
+							draft.currentMoveId = variantMoves[moveIndex + 1].moveId;
+						}
+					} else {
+						if (moveIndex < moves.length - 1) {
+							const move = moves[moveIndex + 1];
+							const tempChessLogic = new Chess(move.after);
+
+							chessView?.set({
+								fen: move.after,
+								check: tempChessLogic.isCheck(),
+							});
+
+							draft.currentMove = moveIndex + 1;
+							draft.currentMoveId = moves[moveIndex + 1].moveId;
+						}
 					}
 
 					return draft;
 				}
 				case 'DISPLAY_PREVIOUS_MOVE_IN_HISTORY': {
-					const currentMove = draft.currentMove;
+					//TODO: chess.js
+					const currentMoveId = draft.currentMoveId;
 					const moves = draft.study.moves;
 
-					if (currentMove >= 0) {
-						const move = moves[currentMove];
-						const tempChessLogic = new Chess(move.before);
+					const { variant, moveIndex } = findMoveIndex(moves, currentMoveId);
 
-						chessView?.set({
-							fen: move.before,
-							check: tempChessLogic.isCheck(),
-						});
+					if (variant) {
+						const variantMoves =
+							moves[variant.parentMoveIndex].variants[variant.variantIndex]
+								.moves;
 
-						draft.isViewOnly = true;
-						draft.currentMove = currentMove - 1;
-						draft.currentMoveId = moves[currentMove - 1]?.moveId || '';
+						if (moveIndex > 0) {
+							const move = variantMoves[moveIndex];
+							const tempChessLogic = new Chess(move.before);
+
+							chessView?.set({
+								fen: move.before,
+								check: tempChessLogic.isCheck(),
+							});
+
+							draft.currentMove = moveIndex - 1;
+							draft.currentMoveId = variantMoves[moveIndex - 1].moveId;
+						}
+					} else {
+						if (moveIndex > 0) {
+							const move = moves[moveIndex];
+							const tempChessLogic = new Chess(move.before);
+
+							chessView?.set({
+								fen: move.before,
+								check: tempChessLogic.isCheck(),
+							});
+
+							draft.currentMove = moveIndex - 1;
+							draft.currentMoveId = moves[moveIndex - 1].moveId;
+						}
 					}
 
 					return draft;
 				}
 				case 'DISPLAY_SELECTED_MOVE_IN_HISTORY': {
-					const currentMove = draft.currentMove;
+					const currentMoveId = draft.currentMoveId;
 					const moves = draft.study.moves;
 
-					const moveIndex = action.moveNumber;
+					const moveId = action.moveId;
 
-					if (moveIndex !== currentMove) {
+					const { variant, moveIndex } = findMoveIndex(moves, moveId);
+
+					if (currentMoveId === moveId) return draft;
+
+					if (variant) {
+						const parent = moves[variant.parentMoveIndex];
+						const variantMoves = parent.variants[variant.variantIndex].moves;
+
+						const move = variantMoves[moveIndex];
+
+						const chess = new Chess(move.after);
+
+						//TODO: Make viewOnly if its not the last move in the variant
+						chessView?.set({
+							fen: move.after,
+							check: chess.isCheck(),
+							movable: {
+								free: false,
+								color: toColor(chess),
+								dests: toDests(chess),
+								events: {
+									//Hook up the Chessground UI changes to our App State
+									after: (orig, dest, _metadata) => {
+										const handler = playOtherSide(chessView, chess);
+
+										dispatch({
+											type: 'ADD_MOVE_TO_HISTORY',
+											move: handler(orig, dest),
+										});
+									},
+								},
+							},
+							turnColor: toColor(chess),
+						});
+
+						draft.currentMove = moveIndex;
+						draft.currentMoveId = move.moveId;
+					} else {
 						const move = moves[moveIndex];
-						const tempChess = new Chess(move.after);
+
+						const chess = new Chess(move.after);
 
 						chessView?.set({
 							fen: move.after,
-							check: tempChess.isCheck(),
+							check: chess.isCheck(),
+							movable: {
+								free: false,
+								color: toColor(chess),
+								dests: toDests(chess),
+								events: {
+									//Hook up the Chessground UI changes to our App State
+									after: (orig, dest, _metadata) => {
+										const handler = playOtherSide(chessView, chess);
+
+										dispatch({
+											type: 'ADD_MOVE_TO_HISTORY',
+											move: handler(orig, dest),
+										});
+									},
+								},
+							},
+							turnColor: toColor(chess),
 						});
-
-						if (moveIndex !== moves.length - 1) {
-							draft.isViewOnly = true;
-						} else {
-							draft.isViewOnly = false;
-						}
-
 						draft.currentMove = moveIndex;
+						draft.currentMoveId = move.moveId;
 					}
 
 					return draft;
@@ -160,17 +283,81 @@ export const ChessStudy = ({
 					return draft;
 				}
 				case 'ADD_MOVE_TO_HISTORY': {
-					const move = action.move;
+					const newMove = action.move;
 
-					draft.study.moves.push({
-						...move,
-						moveId: nanoid(),
-						variants: [],
-						shapes: [],
-						comment: null,
-					});
+					const moves = draft.study.moves;
+					const currentMoveId = draft.currentMoveId;
 
-					draft.currentMove = draft.currentMove + 1;
+					const currentMoveIndex = moves.findIndex(
+						(move) => move.moveId === currentMoveId
+					);
+
+					const { variant, moveIndex } = findMoveIndex(moves, currentMoveId);
+					const moveId = nanoid();
+
+					if (variant) {
+						//handle variant
+						const parent = moves[variant.parentMoveIndex];
+						const variantMoves = parent.variants[variant.variantIndex].moves;
+
+						const isLastMove = moveIndex === variantMoves.length - 1;
+
+						//Only push if its the last move in the variant because depth can only be 1
+						if (isLastMove) {
+							variantMoves.push({
+								...newMove,
+								moveId: moveId,
+								shapes: [],
+								comment: null,
+							});
+
+							const tempChess = new Chess(newMove.after);
+
+							draft.currentMove = draft.currentMove + 1;
+							draft.currentMoveId = moveId;
+							chessView?.set({
+								fen: newMove.after,
+								check: tempChess.isCheck(),
+							});
+						}
+					} else {
+						//handle main line
+						const isLastMove = currentMoveIndex === moves.length - 1;
+
+						if (isLastMove) {
+							moves.push({
+								...newMove,
+								moveId: moveId,
+								variants: [],
+								shapes: [],
+								comment: null,
+							});
+
+							draft.currentMove = draft.currentMove + 1;
+							draft.currentMoveId = moveId;
+						} else {
+							const currentMove = moves[moveIndex];
+
+							//check if a variant with this first move already exists
+							const sameVariant = currentMove.variants.findIndex(
+								(variant) => variant.moves[0]?.san === newMove.san
+							);
+							if (sameVariant >= 0) {
+								draft.currentMoveId =
+									currentMove.variants[sameVariant].moves[0].moveId;
+							} else {
+								currentMove.variants.push({
+									parentMoveId: currentMove.moveId,
+									variantId: nanoid(),
+									moves: [
+										{ ...newMove, moveId: moveId, shapes: [], comment: null },
+									],
+								});
+
+								draft.currentMoveId = moveId;
+							}
+						}
+					}
 
 					return draft;
 				}
@@ -221,17 +408,17 @@ export const ChessStudy = ({
 				<div className="pgn-container">
 					<PgnViewer
 						history={gameState.study.moves}
-						currentMove={gameState.currentMove}
+						currentMoveId={gameState.currentMoveId}
 						onBackButtonClick={() =>
 							dispatch({ type: 'DISPLAY_PREVIOUS_MOVE_IN_HISTORY' })
 						}
 						onForwardButtonClick={() =>
 							dispatch({ type: 'DISPLAY_NEXT_MOVE_IN_HISTORY' })
 						}
-						onMoveItemClick={(moveNumber: number) =>
+						onMoveItemClick={(moveId: string) =>
 							dispatch({
 								type: 'DISPLAY_SELECTED_MOVE_IN_HISTORY',
-								moveNumber: moveNumber,
+								moveId: moveId,
 							})
 						}
 						onSaveButtonClick={onSaveButtonClick}

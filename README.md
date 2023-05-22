@@ -10,15 +10,19 @@ With this plugin, you can either import PGNs or simply start a fresh new game. I
 
 ## Table of contents
 
-- [Motivation](#motivation)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Features](#features)
-- [Settings](#settings)
-- [Roadmap](#roadmap)
-- [Tools Used](#tools-used)
-- [Alternatives](#alternatives)
-- [License](#license)
+- [Obsidian Chess Study](#obsidian-chess-study)
+  - [Table of contents](#table-of-contents)
+  - [Motivation](#motivation)
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [Features](#features)
+    - [1.0.0](#100)
+    - [1.0.1](#101)
+  - [Settings](#settings)
+  - [Roadmap](#roadmap)
+  - [Tools Used](#tools-used)
+  - [Alternatives](#alternatives)
+  - [License](#license)
 
 ## Motivation
 
@@ -46,6 +50,8 @@ After that the PGN viewer/editor will render and you are good to go:
 
 ## Features
 
+### 1.0.0
+
 - [x] Import PGNs
 - [x] Store game state in JSON
 - [x] Add custom PGN viewer
@@ -53,6 +59,10 @@ After that the PGN viewer/editor will render and you are good to go:
 - [x] Move through the moves via navigation buttons and direct click
 - [x] Draw and sync shapes
 - [x] Add and sync comments with Markdown support
+
+### 1.0.1
+
+- [ ] Add support for variants
 
 ## Settings
 
@@ -68,7 +78,6 @@ You can permanently set some settings in the [Obsidian](https://obsidian.md/) pl
 
 ## Roadmap
 
-- [ ] Add support for variants
 - [ ] Add view to manage stored games
 - [ ] Add more styles
 - [ ] Add more settings
