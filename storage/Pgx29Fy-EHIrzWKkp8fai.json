@@ -582,8 +582,50 @@
 			"after": "r1bqkbnr/ppp1pppp/2n5/3p4/3P4/5N2/PPP1PPPP/RNBQKB1R w KQkq - 2 3",
 			"moveId": "EKWVgjt5Z2Cz8bqD5Ie0k",
 			"variants": [],
-			"shapes": [],
-			"comment": null
+			"shapes": [
+				{
+					"orig": "f3",
+					"dest": "e5",
+					"brush": "green"
+				},
+				{
+					"orig": "c3",
+					"dest": "d5",
+					"brush": "green"
+				},
+				{
+					"orig": "b3",
+					"dest": "b5",
+					"brush": "green"
+				},
+				{
+					"orig": "c6",
+					"dest": "e6",
+					"brush": "green"
+				},
+				{
+					"orig": "g6",
+					"dest": "g4",
+					"brush": "green"
+				}
+			],
+			"comment": {
+				"type": "doc",
+				"content": [
+					{
+						"type": "heading",
+						"attrs": {
+							"level": 1
+						},
+						"content": [
+							{
+								"type": "text",
+								"text": "This is a test"
+							}
+						]
+					}
+				]
+			}
 		}
 	]
 }

@@ -14,7 +14,11 @@ import {
 	ChessStudyMove,
 	VariantMove,
 } from 'src/lib/storage';
-import { displayMoveInHistory, findMoveIndex } from 'src/lib/ui-state';
+import {
+	displayMoveInHistory,
+	findMoveIndex,
+	getCurrentMove,
+} from 'src/lib/ui-state';
 import { useImmerReducer } from 'use-immer';
 import { ChessgroundProps, ChessgroundWrapper } from './ChessgroundWrapper';
 import { CommentSection } from './CommentSection';
@@ -111,46 +115,18 @@ export const ChessStudy = ({
 					return draft;
 				}
 				case 'SYNC_SHAPES': {
-					const currentMoveId = draft.currentMove?.moveId;
-					const moves = draft.study.moves;
+					const move = getCurrentMove(draft);
 
-					const { variant, moveIndex } = findMoveIndex(moves, currentMoveId);
-
-					if (variant) {
-						const move =
-							moves[variant.parentMoveIndex].variants[variant.variantIndex]
-								.moves[moveIndex];
-						move.shapes = action.shapes;
-
-						draft.currentMove = move;
-					} else {
-						const move = moves[moveIndex];
-						move.shapes = action.shapes;
-
-						draft.currentMove = move;
-					}
+					move.shapes = action.shapes;
+					draft.currentMove = move;
 
 					return draft;
 				}
 				case 'SYNC_COMMENT': {
-					const currentMoveId = draft.currentMove?.moveId;
-					const moves = draft.study.moves;
+					const move = getCurrentMove(draft);
 
-					const { variant, moveIndex } = findMoveIndex(moves, currentMoveId);
-
-					if (variant) {
-						const move =
-							moves[variant.parentMoveIndex].variants[variant.variantIndex]
-								.moves[moveIndex];
-						move.comment = action.comment;
-
-						draft.currentMove = move;
-					} else {
-						const move = moves[moveIndex];
-						move.comment = action.comment;
-
-						draft.currentMove = move;
-					}
+					move.comment = action.comment;
+					draft.currentMove = move;
 
 					return draft;
 				}

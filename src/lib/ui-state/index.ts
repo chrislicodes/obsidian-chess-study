@@ -93,3 +93,20 @@ export const displayMoveInHistory = (
 
 	return draft;
 };
+
+export const getCurrentMove = (
+	draft: Draft<GameState>
+): Draft<ChessStudyMove> | Draft<VariantMove> => {
+	const currentMoveId = draft.currentMove?.moveId;
+	const moves = draft.study.moves;
+
+	const { variant, moveIndex } = findMoveIndex(moves, currentMoveId);
+
+	if (variant) {
+		return moves[variant.parentMoveIndex].variants[variant.variantIndex].moves[
+			moveIndex
+		];
+	} else {
+		return moves[moveIndex];
+	}
+};
