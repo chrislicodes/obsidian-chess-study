@@ -10,19 +10,17 @@ With this plugin, you can either import PGNs or simply start a fresh new game. I
 
 ## Table of contents
 
-- [Obsidian Chess Study](#obsidian-chess-study)
-  - [Table of contents](#table-of-contents)
-  - [Motivation](#motivation)
-  - [Installation](#installation)
-  - [Usage](#usage)
-  - [Features](#features)
-    - [1.0.0](#100)
-    - [1.0.1](#101)
-  - [Settings](#settings)
-  - [Roadmap](#roadmap)
-  - [Tools Used](#tools-used)
-  - [Alternatives](#alternatives)
-  - [License](#license)
+- [Motivation](#motivation)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Features](#features)
+  - [1.0.0](#100)
+  - [1.0.1](#101)
+- [Settings](#settings)
+- [Roadmap](#roadmap)
+- [Tools Used](#tools-used)
+- [Alternatives](#alternatives)
+- [License](#license)
 
 ## Motivation
 

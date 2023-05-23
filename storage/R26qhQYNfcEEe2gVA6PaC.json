@@ -15,7 +15,13 @@
 			"after": "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1",
 			"moveId": "EAyuEJsIKY7Nvp9v20DdD",
 			"variants": [],
-			"shapes": [],
+			"shapes": [
+				{
+					"orig": "d2",
+					"dest": "d4",
+					"brush": "green"
+				}
+			],
 			"comment": null
 		},
 		{
@@ -185,7 +191,32 @@
 					]
 				}
 			],
-			"shapes": [],
+			"shapes": [
+				{
+					"orig": "f4",
+					"dest": "c1",
+					"brush": "green"
+				},
+				{
+					"orig": "e6",
+					"brush": "green"
+				},
+				{
+					"orig": "d6",
+					"dest": "c5",
+					"brush": "green"
+				},
+				{
+					"orig": "d3",
+					"dest": "b3",
+					"brush": "green"
+				},
+				{
+					"orig": "b5",
+					"dest": "d6",
+					"brush": "green"
+				}
+			],
 			"comment": null
 		},
 		{
@@ -253,23 +284,69 @@
 			"variants": [],
 			"shapes": [
 				{
-					"orig": "f2",
-					"dest": "d4",
+					"orig": "b7",
+					"dest": "b4",
 					"brush": "green"
 				},
 				{
-					"orig": "c3",
+					"orig": "e7",
 					"dest": "d5",
 					"brush": "green"
 				},
 				{
-					"orig": "d6",
-					"dest": "c5",
+					"orig": "f7",
+					"dest": "e5",
+					"brush": "green"
+				}
+			],
+			"comment": null
+		},
+		{
+			"color": "w",
+			"piece": "n",
+			"from": "f3",
+			"to": "e5",
+			"san": "Ne5",
+			"flags": "n",
+			"lan": "f3e5",
+			"before": "r1bqkbnr/ppp1pppp/2n5/3p4/3P4/5N2/PPP1PPPP/RNBQKB1R w KQkq - 2 3",
+			"after": "r1bqkbnr/ppp1pppp/2n5/3pN3/3P4/8/PPP1PPPP/RNBQKB1R b KQkq - 3 3",
+			"moveId": "LqVKpTOqwUOa7ue7pbJ50",
+			"variants": [],
+			"shapes": [
+				{
+					"orig": "d3",
+					"dest": "e5",
 					"brush": "green"
 				},
 				{
-					"orig": "e5",
-					"dest": "f5",
+					"orig": "f7",
+					"dest": "d7",
+					"brush": "green"
+				},
+				{
+					"orig": "b6",
+					"dest": "b5",
+					"brush": "green"
+				},
+				{
+					"orig": "d4",
+					"dest": "c2",
+					"brush": "green"
+				},
+				{
+					"orig": "b2",
+					"dest": "d4",
+					"brush": "green"
+				},
+				{
+					"orig": "g6",
+					"dest": "f6",
+					"brush": "green"
+				},
+				{
+					"orig": "e4",
+					"dest": "e3",
 					"brush": "green"
 				}
 			],

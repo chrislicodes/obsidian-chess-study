@@ -78,6 +78,7 @@ export const PgnViewer = React.memo(
 					<div className="move-item-container">
 						{movePairs.map((pair, i) => {
 							const [wMove, bMove] = pair;
+							const variants = wMove.variants.concat(bMove?.variants || []);
 							return (
 								<React.Fragment key={wMove.san + bMove?.san}>
 									<p className="move-indicator center">{i + 1}</p>
@@ -95,16 +96,15 @@ export const PgnViewer = React.memo(
 									)}
 
 									{/* Add Variants */}
-									<div
-										style={{
-											gridColumn: 'span 3',
-											display: 'flex',
-											flexDirection: 'column',
-										}}
-									>
-										{wMove.variants
-											.concat(bMove?.variants || [])
-											.map((variant, i) => {
+									{!!variants.length && (
+										<div
+											style={{
+												gridColumn: 'span 3',
+												display: 'flex',
+												flexDirection: 'column',
+											}}
+										>
+											{variants.map((variant, i) => {
 												return (
 													<div key={'sd'}>
 														{variant.moves.map((move) => (
@@ -125,7 +125,8 @@ export const PgnViewer = React.memo(
 													</div>
 												);
 											})}
-									</div>
+										</div>
+									)}
 								</React.Fragment>
 							);
 						})}

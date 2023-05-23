@@ -1,11 +1,10 @@
-import { Chessground as ChessgroundApi } from 'chessground';
-import * as React from 'react';
-import { useEffect, useRef } from 'react';
-
 import { Chess, Move } from 'chess.js';
+import { Chessground as ChessgroundApi } from 'chessground';
 import { Api } from 'chessground/api';
 import { Config } from 'chessground/config';
 import { DrawShape } from 'chessground/draw';
+import * as React from 'react';
+import { useEffect, useRef } from 'react';
 import { playOtherSide, toColor, toDests } from 'src/lib/chess-logic';
 
 export interface ChessgroundProps {
@@ -45,17 +44,14 @@ export const ChessgroundWrapper = React.memo(
 						free: false,
 						color: toColor(chess),
 						dests: toDests(chess),
-						events: {
-							//Hook up the Chessground UI changes to our App State
-							after: (orig, dest, _metadata) => {
-								const handler = playOtherSide(chessgroundApi, chess);
-
-								addMoveToHistory(handler(orig, dest));
-							},
-						},
 					},
 					highlight: {
 						check: true,
+					},
+					drawable: {
+						onChange: (shapes) => {
+							setShapes(shapes);
+						},
 					},
 					turnColor: toColor(chess),
 					...config,
@@ -65,23 +61,28 @@ export const ChessgroundWrapper = React.memo(
 			} else if (ref.current && api) {
 				api.set(config);
 			}
-		}, [addMoveToHistory, api, chess, config, setApi]);
+		}, [addMoveToHistory, api, chess, config, setApi, setShapes]);
+
+		//Sync Chess Logic
+		useEffect(() => {
+			api?.set({
+				movable: {
+					events: {
+						//Hook up the Chessground UI changes to our App State
+						after: (orig, dest, _metadata) => {
+							const handler = playOtherSide(api, chess);
+
+							addMoveToHistory(handler(orig, dest));
+						},
+					},
+				},
+			});
+		}, [addMoveToHistory, api, chess]);
 
 		//Sync View Only
 		useEffect(() => {
 			api?.set({ viewOnly: isViewOnly });
 		}, [isViewOnly, api]);
-
-		//Sync Shapes To State
-		useEffect(() => {
-			api?.set({
-				drawable: {
-					onChange: (shapes) => {
-						setShapes(shapes);
-					},
-				},
-			});
-		}, [api, setShapes]);
 
 		// Load Shapes
 		useEffect(() => {
