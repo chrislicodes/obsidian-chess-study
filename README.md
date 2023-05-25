@@ -60,7 +60,7 @@ After that the PGN viewer/editor will render and you are good to go:
 
 ### 1.0.1
 
-- [ ] Add support for variants
+- [x] Add support for variants (depth 1)
 
 ## Settings
 
@@ -76,6 +76,7 @@ You can permanently set some settings in the [Obsidian](https://obsidian.md/) pl
 
 ## Roadmap
 
+- [ ] Add undo button
 - [ ] Add view to manage stored games
 - [ ] Add more styles
 - [ ] Add more settings
