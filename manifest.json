@@ -1,7 +1,7 @@
 {
 	"id": "chess-study",
 	"name": "Chess Study",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"minAppVersion": "0.15.0",
 	"description": "A chess study helper and PGN viewer/editor.",
 	"author": "Christoph Lindstädt",

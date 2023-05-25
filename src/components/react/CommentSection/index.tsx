@@ -4,21 +4,17 @@ import * as React from 'react';
 import { useEffect } from 'react';
 
 interface CommentSectionProps {
-	currentMove: number;
 	currentComment: JSONContent | null;
-	setComments: React.Dispatch<React.SetStateAction<(JSONContent | null)[]>>;
+	setComments: (comment: JSONContent) => void;
 }
 
 export const CommentSection = React.memo(
-	({ currentMove, currentComment, setComments }: CommentSectionProps) => {
+	({ currentComment, setComments }: CommentSectionProps) => {
 		const editor = useEditor({
 			extensions: [StarterKit],
 			onUpdate: (state) => {
-				setComments((currentComments) => {
-					const currentCommentModified = [...currentComments];
-					currentCommentModified[currentMove] = state.editor.getJSON();
-					return currentCommentModified;
-				});
+				const comment = state.editor.getJSON();
+				if (comment) setComments(comment);
 			},
 		});
 
