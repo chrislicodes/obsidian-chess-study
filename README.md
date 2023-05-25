@@ -10,17 +10,19 @@ With this plugin, you can either import PGNs or simply start a fresh new game. I
 
 ## Table of contents
 
-- [Motivation](#motivation)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Features](#features)
-  - [1.0.0](#100)
-  - [1.0.1](#101)
-- [Settings](#settings)
-- [Roadmap](#roadmap)
-- [Tools Used](#tools-used)
-- [Alternatives](#alternatives)
-- [License](#license)
+- [Obsidian Chess Study](#obsidian-chess-study)
+  - [Table of contents](#table-of-contents)
+  - [Motivation](#motivation)
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [Features](#features)
+    - [1.0.0](#100)
+    - [1.0.1](#101)
+  - [Settings](#settings)
+  - [Roadmap](#roadmap)
+  - [Tools Used](#tools-used)
+  - [Alternatives](#alternatives)
+  - [License](#license)
 
 ## Motivation
 
@@ -42,9 +44,9 @@ Once you click `Submit`, Obsidian Chess Study will parse the PGN, generate a new
 
 ![chess-study-codeblock](imgs/chess-study-codeblock.png)
 
-After that the PGN viewer/editor will render and you are good to go:
+After that the PGN viewer/editor will render and you are good to go (styles are aligned with your theme and accent color):
 
-![cchess-study-codeblock](imgs/chess-study-demo.gif)
+![chess-study-codeblock](imgs/chess-study-demo.gif)
 
 ## Features
 
@@ -61,6 +63,8 @@ After that the PGN viewer/editor will render and you are good to go:
 ### 1.0.1
 
 - [x] Add support for variants (depth 1)
+
+![chess-study-variants](imgs/chess-study-variants.png)
 
 ## Settings
 

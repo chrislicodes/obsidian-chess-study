@@ -187,21 +187,11 @@ export const ChessStudy = ({
 						} else {
 							const currentMove = moves[moveIndex];
 
-							//check if the next move is the same move
+							// check if the next move is the same move
 							const nextMove = moves[moveIndex + 1];
 
 							if (nextMove.san === newMove.san) {
 								draft.currentMove = nextMove;
-								return draft;
-							}
-
-							//check if a variant with this first move already exists
-							const sameVariant = currentMove.variants.findIndex(
-								(variant) => variant.moves[0]?.san === newMove.san
-							);
-
-							if (sameVariant >= 0) {
-								draft.currentMove = currentMove.variants[sameVariant].moves[0];
 								return draft;
 							}
 

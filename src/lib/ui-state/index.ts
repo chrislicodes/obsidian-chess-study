@@ -75,7 +75,6 @@ export const displayMoveInHistory = (
 
 	const chess = new Chess(moveToDisplay.after);
 
-	//TODO: Handle is view only if not the last move in variant - put this into a function also for inital setuo
 	chessView.set({
 		fen: moveToDisplay.after,
 		check: chess.isCheck(),
