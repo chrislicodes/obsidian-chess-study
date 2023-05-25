@@ -1,5 +1,4 @@
 <!-- omit in toc -->
-
 # Obsidian Chess Study
 
 > A chess study helper and PGN viewer/editor for [Obsidian](https://obsidian.md/).
@@ -7,22 +6,19 @@
 With this plugin, you can either import PGNs or simply start a fresh new game. It allows you to add comments and arrows for each move, which will be persisted within a JSON File in your vault. Although it is not a full analysis board, it serves as a valuable tool to support your chess notetaking in [Obsidian](https://obsidian.md/).
 
 <!-- omit in toc -->
-
 ## Table of contents
 
-- [Obsidian Chess Study](#obsidian-chess-study)
-  - [Table of contents](#table-of-contents)
-  - [Motivation](#motivation)
-  - [Installation](#installation)
-  - [Usage](#usage)
-  - [Features](#features)
-    - [1.0.0](#100)
-    - [1.0.1](#101)
-  - [Settings](#settings)
-  - [Roadmap](#roadmap)
-  - [Tools Used](#tools-used)
-  - [Alternatives](#alternatives)
-  - [License](#license)
+- [Motivation](#motivation)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Features](#features)
+  - [1.0.0](#100)
+  - [1.1.0](#110)
+- [Settings](#settings)
+- [Roadmap](#roadmap)
+- [Tools Used](#tools-used)
+- [Alternatives](#alternatives)
+- [License](#license)
 
 ## Motivation
 
@@ -60,7 +56,7 @@ After that the PGN viewer/editor will render and you are good to go (styles are 
 - [x] Draw and sync shapes
 - [x] Add and sync comments with Markdown support
 
-### 1.0.1
+### 1.1.0
 
 - [x] Add support for variants (depth 1)
 
