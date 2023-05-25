@@ -1,6 +1,6 @@
 import { ArrowLeft, ArrowRight, Save } from 'lucide-react';
 import * as React from 'react';
-import { useEffect, useMemo, useRef } from 'react';
+import { ReactNode, useEffect, useMemo, useRef } from 'react';
 import { ChessStudyMove } from 'src/lib/storage';
 
 const chunkArray = <T,>(array: T[], chunkSize: number) => {
@@ -54,6 +54,56 @@ const MoveItem = ({
 	);
 };
 
+const VariantMoveItem = ({
+	isCurrentMove,
+	san,
+	onMoveItemClick,
+	moveIndicator = null,
+}: {
+	isCurrentMove: boolean;
+	san: string;
+	onMoveItemClick: () => void;
+	moveIndicator?: string | null;
+}) => {
+	const ref = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		if (ref.current && isCurrentMove) {
+			ref.current?.scrollIntoView({
+				behavior: 'smooth',
+				block: 'nearest',
+				inline: 'end',
+			});
+		}
+	}, [isCurrentMove]);
+
+	return (
+		<div
+			className={`variant-move-item ${(isCurrentMove && 'active') || ''}`}
+			onClick={(e) => {
+				e.stopPropagation();
+				onMoveItemClick();
+			}}
+			ref={ref}
+		>
+			<span className={'variant-move-indicator'}>{moveIndicator}</span>
+			{san}
+		</div>
+	);
+};
+
+const VariantMoveItemContainer = ({ children }: { children: ReactNode }) => {
+	return <div className="variant-move-item-container">{children}</div>;
+};
+
+const VariantContainer = ({ children }: { children: ReactNode }) => {
+	return <div className="variant-container">{children}</div>;
+};
+
+const VariantsContainer = ({ children }: { children: ReactNode }) => {
+	return <div className="variants-container">{children}</div>;
+};
+
 export const PgnViewer = React.memo(
 	({
 		history,
@@ -76,12 +126,14 @@ export const PgnViewer = React.memo(
 			<div className="height-width-100">
 				<div className="move-item-section">
 					<div className="move-item-container">
-						{movePairs.map((pair, i) => {
+						{movePairs.map((pair, currentMoveIndex) => {
 							const [wMove, bMove] = pair;
-							const variants = wMove.variants.concat(bMove?.variants || []);
+
 							return (
 								<React.Fragment key={wMove.san + bMove?.san}>
-									<p className="move-indicator center">{i + 1}</p>
+									<p className="move-indicator center">
+										{currentMoveIndex + 1}
+									</p>
 									<MoveItem
 										san={wMove.san}
 										isCurrentMove={wMove.moveId === currentMoveId}
@@ -94,38 +146,102 @@ export const PgnViewer = React.memo(
 											onMoveItemClick={() => onMoveItemClick(bMove.moveId)}
 										/>
 									)}
+									{!!wMove.variants.concat(bMove?.variants || []).length && (
+										<VariantsContainer>
+											{!!wMove.variants.length && (
+												<VariantContainer>
+													{wMove.variants.map((variant, i) => {
+														return (
+															<VariantMoveItemContainer key="TODO">
+																{chunkArray(variant.moves, 2).map((pair, i) => {
+																	const [bMove, wMove] = pair;
 
-									{/* Add Variants */}
-									{!!variants.length && (
-										<div
-											style={{
-												gridColumn: 'span 3',
-												display: 'flex',
-												flexDirection: 'column',
-											}}
-										>
-											{variants.map((variant, i) => {
-												return (
-													<div key={'sd'}>
-														{variant.moves.map((move) => (
-															<span
-																style={{
-																	cursor: 'pointer',
-																	color:
-																		move.moveId === currentMoveId
-																			? 'red'
-																			: 'unset',
-																}}
-																onClick={() => onMoveItemClick(move.moveId)}
-																key={move.before}
-															>
-																{move.san}
-															</span>
-														))}
-													</div>
-												);
-											})}
-										</div>
+																	return (
+																		<>
+																			<VariantMoveItem
+																				key="TODO"
+																				isCurrentMove={
+																					bMove.moveId === currentMoveId
+																				}
+																				san={bMove.san}
+																				onMoveItemClick={() =>
+																					onMoveItemClick(bMove.moveId)
+																				}
+																				moveIndicator={
+																					(i === 0 &&
+																						`${
+																							currentMoveIndex + 1 + i
+																						}... `) ||
+																					null
+																				}
+																			/>
+																			{wMove && (
+																				<VariantMoveItem
+																					key="TODO"
+																					isCurrentMove={
+																						wMove.moveId === currentMoveId
+																					}
+																					san={wMove.san}
+																					onMoveItemClick={() =>
+																						onMoveItemClick(wMove.moveId)
+																					}
+																					moveIndicator={
+																						(i % 2 === 0 && null) ||
+																						`${currentMoveIndex + 2 + i}. `
+																					}
+																				/>
+																			)}
+																		</>
+																	);
+																})}
+															</VariantMoveItemContainer>
+														);
+													})}
+												</VariantContainer>
+											)}
+											{!!bMove?.variants.length && (
+												<VariantContainer>
+													{bMove.variants.map((variant, i) => {
+														return (
+															<VariantMoveItemContainer key="TODO">
+																{chunkArray(variant.moves, 2).map((pair, i) => {
+																	const [wMove, bMove] = pair;
+																	return (
+																		<>
+																			<VariantMoveItem
+																				key="TODO"
+																				isCurrentMove={
+																					wMove.moveId === currentMoveId
+																				}
+																				san={wMove.san}
+																				onMoveItemClick={() =>
+																					onMoveItemClick(wMove.moveId)
+																				}
+																				moveIndicator={`${
+																					currentMoveIndex + 2 + i
+																				}. `}
+																			/>
+																			{bMove && (
+																				<VariantMoveItem
+																					key="TODO"
+																					isCurrentMove={
+																						bMove.moveId === currentMoveId
+																					}
+																					san={bMove.san}
+																					onMoveItemClick={() =>
+																						onMoveItemClick(bMove.moveId)
+																					}
+																				/>
+																			)}
+																		</>
+																	);
+																})}
+															</VariantMoveItemContainer>
+														);
+													})}
+												</VariantContainer>
+											)}
+										</VariantsContainer>
 									)}
 								</React.Fragment>
 							);

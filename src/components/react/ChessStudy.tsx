@@ -245,7 +245,7 @@ export const ChessStudy = ({
 	}, [chessStudyId, dataAdapter, gameState.study]);
 
 	return (
-		<div className="chess-study border">
+		<div className="chess-study">
 			<div className="chessground-pgn-container">
 				<div className="chessground-container">
 					<ChessgroundWrapper
@@ -286,7 +286,7 @@ export const ChessStudy = ({
 					/>
 				</div>
 			</div>
-			<div className="CommentSection border-top">
+			<div className="CommentSection">
 				<CommentSection
 					currentComment={gameState.currentMove?.comment}
 					setComments={(comment: JSONContent) =>

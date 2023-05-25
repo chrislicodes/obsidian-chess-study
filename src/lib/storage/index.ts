@@ -4,6 +4,8 @@ import { DrawShape } from 'chessground/draw';
 import { nanoid } from 'nanoid';
 import { DataAdapter, normalizePath } from 'obsidian';
 
+export const CURRENT_STORAGE_VERSION = '0.0.1';
+
 export interface VariantMove extends Move {
 	moveId: string;
 	shapes: DrawShape[];
@@ -24,6 +26,7 @@ export interface ChessStudyMove extends Move {
 }
 
 export interface ChessStudyFileData {
+	version: string;
 	header: { title: string | null };
 	moves: ChessStudyMove[];
 }

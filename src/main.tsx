@@ -1,6 +1,10 @@
 import { Chess } from 'chess.js';
 import { Editor, Notice, Plugin, normalizePath } from 'obsidian';
-import { ChessStudyDataAdapter, ChessStudyFileData } from 'src/lib/storage';
+import {
+	CURRENT_STORAGE_VERSION,
+	ChessStudyDataAdapter,
+	ChessStudyFileData,
+} from 'src/lib/storage';
 import { ReactView } from './components/ReactView';
 import { PgnModal } from './components/obsidian/PgnModal';
 import {
@@ -59,6 +63,7 @@ export default class ChessStudyPlugin extends Plugin {
 						}
 
 						const chessStudyFileData: ChessStudyFileData = {
+							version: CURRENT_STORAGE_VERSION,
 							header: {
 								title: chess.header()['opening'] || null,
 							},
