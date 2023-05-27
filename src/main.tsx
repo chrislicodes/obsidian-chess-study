@@ -76,6 +76,8 @@ export default class ChessStudyPlugin extends Plugin {
 							})),
 						};
 
+						this.dataAdapter.createStorageFolderIfNotExists();
+
 						const id = await this.dataAdapter.saveFile(chessStudyFileData);
 
 						editor.replaceRange(

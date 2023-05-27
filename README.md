@@ -12,8 +12,8 @@ With this plugin, you can either import PGNs or simply start a fresh new game. I
 - [Installation](#installation)
 - [Usage](#usage)
 - [Features](#features)
-  - [1.0.0](#100)
-  - [1.1.0](#110)
+	- [1.0.0](#100)
+	- [1.1.0](#110)
 - [Settings](#settings)
 - [Roadmap](#roadmap)
 - [Tools Used](#tools-used)
@@ -76,6 +76,8 @@ You can permanently set some settings in the [Obsidian](https://obsidian.md/) pl
 
 ## Roadmap
 
+- [ ] Add option to export current FEN
+- [ ] Add option to start from a specific position (FEN)
 - [ ] Add undo button
 - [ ] Add view to manage stored games
 - [ ] Add more styles
