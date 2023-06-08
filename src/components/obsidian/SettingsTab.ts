@@ -24,10 +24,8 @@ export class SettingsTab extends PluginSettingTab {
 
 		containerEl.empty();
 
-		containerEl.createEl('h2', { text: 'Obsidian Chess Study Settings' });
-
 		new Setting(containerEl)
-			.setName('Board Orientation')
+			.setName('Board orientation')
 			.setDesc('Sets the default orientation of the board')
 			.addDropdown((dropdown) => {
 				dropdown.addOption('white', 'White');
@@ -44,7 +42,7 @@ export class SettingsTab extends PluginSettingTab {
 			});
 
 		new Setting(containerEl)
-			.setName('Board Color')
+			.setName('Board color')
 			.setDesc('Sets the default color of the board')
 			.addDropdown((dropdown) => {
 				dropdown.addOption('green', 'Green');
