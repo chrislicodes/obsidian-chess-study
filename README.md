@@ -71,6 +71,7 @@ Here are the available settings for a `chessStudy` code block:
 | `chessStudyId`     | Valid nanoid       | Valid ID for a file stored in the plugin storage |
 | `boardOrientation` | `white` \| `black` | Orientation of the board                         |
 | `boardColor`       | `green` \| `brown` | Color of the board                               |
+| `viewComments`     | `true`  \| `false` | Whether to display the comments section          |
 
 You can permanently set some settings in the [Obsidian](https://obsidian.md/) plugin settings for Obsidian Chess Study.
 
