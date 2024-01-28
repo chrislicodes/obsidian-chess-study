@@ -55,7 +55,7 @@ export const ChessStudy = ({
 	dataAdapter,
 }: AppProps) => {
 	// Parse Obsidian / Code Block Settings
-	const { boardColor, boardOrientation, chessStudyId } = parseUserConfig(
+	const { boardColor, boardOrientation, viewComments, chessStudyId } = parseUserConfig(
 		pluginSettings,
 		source
 	);
@@ -277,12 +277,14 @@ export const ChessStudy = ({
 				</div>
 			</div>
 			<div className="CommentSection">
+				{ viewComments &&
 				<CommentSection
 					currentComment={gameState.currentMove?.comment}
 					setComments={(comment: JSONContent) =>
 						dispatch({ type: 'SYNC_COMMENT', comment: comment })
 					}
 				/>
+				}
 			</div>
 		</div>
 	);
