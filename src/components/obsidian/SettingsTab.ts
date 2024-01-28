@@ -68,7 +68,7 @@ export class SettingsTab extends PluginSettingTab {
 				dropdown
 					.setValue(this.plugin.settings.viewComments)
 					.onChange((viewComments) => {
-						this.plugin.settings.viewComments = viewComments as true | false;
+						this.plugin.settings.viewComments = (viewComments == true || viewComments == "true" || viewComments == "True") as true | false;
 						this.plugin.saveSettings();
 					});
 			});

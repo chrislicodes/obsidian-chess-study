@@ -276,16 +276,17 @@ export const ChessStudy = ({
 					/>
 				</div>
 			</div>
+			{ viewComments &&
 			<div className="CommentSection">
-				{ viewComments &&
+				<h3>{ viewComments }</h3>
 				<CommentSection
 					currentComment={gameState.currentMove?.comment}
 					setComments={(comment: JSONContent) =>
 						dispatch({ type: 'SYNC_COMMENT', comment: comment })
 					}
 				/>
-				}
 			</div>
+			}
 		</div>
 	);
 };
