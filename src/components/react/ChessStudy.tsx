@@ -55,10 +55,8 @@ export const ChessStudy = ({
 	dataAdapter,
 }: AppProps) => {
 	// Parse Obsidian / Code Block Settings
-	const { boardColor, boardOrientation, viewComments, chessStudyId } = parseUserConfig(
-		pluginSettings,
-		source
-	);
+	const { boardColor, boardOrientation, viewComments, chessStudyId } =
+		parseUserConfig(pluginSettings, source);
 
 	// Setup Chessground API
 	const [chessView, setChessView] = useState<Api | null>(null);
@@ -276,17 +274,16 @@ export const ChessStudy = ({
 					/>
 				</div>
 			</div>
-			{ viewComments &&
-			<div className="CommentSection">
-				<h3>{ viewComments }</h3>
-				<CommentSection
-					currentComment={gameState.currentMove?.comment}
-					setComments={(comment: JSONContent) =>
-						dispatch({ type: 'SYNC_COMMENT', comment: comment })
-					}
-				/>
-			</div>
-			}
+			{viewComments && (
+				<div className="CommentSection">
+					<CommentSection
+						currentComment={gameState.currentMove?.comment}
+						setComments={(comment: JSONContent) =>
+							dispatch({ type: 'SYNC_COMMENT', comment: comment })
+						}
+					/>
+				</div>
+			)}
 		</div>
 	);
 };
