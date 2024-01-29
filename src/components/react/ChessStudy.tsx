@@ -271,6 +271,14 @@ export const ChessStudy = ({
 							})
 						}
 						onSaveButtonClick={onSaveButtonClick}
+						onCopyButtonClick={() => {
+							try {
+								navigator.clipboard.writeText(chessLogic.fen())
+								new Notice('Copied to clipboard!');
+							} catch (e) {
+								new Notice('Could not copy to clipboard:', e);
+							}
+						}}
 					/>
 				</div>
 			</div>

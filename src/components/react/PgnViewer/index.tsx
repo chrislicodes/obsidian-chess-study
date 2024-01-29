@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight, Save } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Copy, Save, Undo2 } from 'lucide-react';
 import * as React from 'react';
 import { ReactNode, useEffect, useMemo, useRef } from 'react';
 import { ChessStudyMove } from 'src/lib/storage';
@@ -112,6 +112,7 @@ export const PgnViewer = React.memo(
 		onForwardButtonClick,
 		onMoveItemClick,
 		onSaveButtonClick,
+		onCopyButtonClick,
 	}: {
 		history: ChessStudyMove[];
 		currentMoveId: string;
@@ -119,6 +120,7 @@ export const PgnViewer = React.memo(
 		onForwardButtonClick: () => void;
 		onMoveItemClick: (moveId: string) => void;
 		onSaveButtonClick: () => void;
+		onCopyButtonClick: () => void;
 	}) => {
 		const movePairs = useMemo(() => chunkArray(history, 2), [history]);
 
@@ -269,13 +271,21 @@ export const PgnViewer = React.memo(
 				</div>
 				<div className="button-section">
 					<button onClick={() => onBackButtonClick()}>
+						<Undo2 />
+					</button>
+					<button onClick={() => onBackButtonClick()}>
 						<ArrowLeft />
 					</button>
 					<button onClick={() => onForwardButtonClick()}>
 						<ArrowRight />
 					</button>
+				</div>
+				<div className="button-section">
 					<button onClick={() => onSaveButtonClick()}>
 						<Save strokeWidth={'1px'} />
+					</button>
+					<button onClick={() => onCopyButtonClick()}>
+						<Copy strokeWidth={'1px'} />
 					</button>
 				</div>
 			</div>

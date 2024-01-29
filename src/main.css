@@ -78,7 +78,7 @@
 /* PGN Viewer */
 
 .chess-study .move-item-section {
-	height: 415px;
+	height: 380px;
 }
 
 .chess-study .button-section {
@@ -97,7 +97,7 @@
 	grid-template-columns: 0.15fr 0.425fr 0.425fr;
 	grid-auto-rows: minmax(30px, auto);
 	width: 100%;
-	max-height: 415px;
+	max-height: 380px;
 	overflow-y: scroll;
 }
 
