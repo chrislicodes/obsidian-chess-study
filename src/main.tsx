@@ -47,13 +47,22 @@ export default class ChessStudyPlugin extends Plugin {
 		// Add command
 		this.addCommand({
 			id: 'insert-chess-study',
-			name: 'Insert PGN-Editor at cursor position',
+			name: 'Insert FEN/PGN-Editor at cursor position',
 			editorCallback: (editor: Editor) => {
 				const cursorPosition = editor.getCursor();
 
-				const onSubmit = async (pgn: string) => {
+				const onSubmit = async (pgn_or_fen: string) => {
 					try {
-						const chess = new Chess();
+						let pgn = '', fen = '';
+						if (pgn_or_fen) {
+							if (pgn_or_fen.includes('/')) {
+								fen = pgn_or_fen.trim();
+							} else {
+								pgn = pgn_or_fen.trim();
+							}
+						}
+
+						const chess = (fen) ? new Chess(fen) : new Chess();
 
 						if (pgn) {
 							//Try to parse the PGN
@@ -80,8 +89,12 @@ export default class ChessStudyPlugin extends Plugin {
 
 						const id = await this.dataAdapter.saveFile(chessStudyFileData);
 
+						const blockStr = (fen)
+							? `\`\`\`chessStudy\nchessStudyId: ${id}\nfen: ${fen}\n\`\`\``
+							: `\`\`\`chessStudy\nchessStudyId: ${id}\n\`\`\``;
+
 						editor.replaceRange(
-							`\`\`\`chessStudy\nchessStudyId: ${id}\n\`\`\``,
+							blockStr,
 							cursorPosition
 						);
 					} catch (e) {

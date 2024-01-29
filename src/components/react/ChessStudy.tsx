@@ -55,7 +55,7 @@ export const ChessStudy = ({
 	dataAdapter,
 }: AppProps) => {
 	// Parse Obsidian / Code Block Settings
-	const { boardColor, boardOrientation, viewComments, chessStudyId } =
+	const { boardColor, boardOrientation, fen, viewComments, chessStudyId } =
 		parseUserConfig(pluginSettings, source);
 
 	// Setup Chessground API
@@ -63,7 +63,7 @@ export const ChessStudy = ({
 
 	// Setup Chess.js API
 	const initialChessLogic = useMemo(() => {
-		const chess = new Chess();
+		const chess = (fen) ? new Chess(fen) : new Chess();
 
 		chessStudyData.moves.forEach((move) => {
 			chess.move({

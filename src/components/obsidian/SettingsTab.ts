@@ -4,12 +4,14 @@ import ChessStudyPlugin from 'src/main';
 export interface ChessStudyPluginSettings {
 	boardOrientation: 'white' | 'black';
 	boardColor: 'green' | 'brown';
+	fen: string;
 	viewComments: true | false;
 }
 
 export const DEFAULT_SETTINGS: ChessStudyPluginSettings = {
 	boardOrientation: 'white',
 	boardColor: 'green',
+	fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
 	viewComments: true,
 };
 
@@ -54,6 +56,18 @@ export class SettingsTab extends PluginSettingTab {
 					.setValue(this.plugin.settings.boardColor)
 					.onChange((boardColor) => {
 						this.plugin.settings.boardColor = boardColor as 'green' | 'brown';
+						this.plugin.saveSettings();
+					});
+			});
+
+		new Setting(containerEl)
+			.setName('FEN')
+			.setDesc('Sets the default board position')
+			.addText((text) => {
+				text
+					.setValue(this.plugin.settings.fen)
+					.onChange((fen) => {
+						this.plugin.settings.fen = fen as string;
 						this.plugin.saveSettings();
 					});
 			});
