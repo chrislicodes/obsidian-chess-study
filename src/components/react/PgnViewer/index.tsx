@@ -3,9 +3,9 @@ import * as React from 'react';
 import { ReactNode, useEffect, useMemo, useRef } from 'react';
 import { ChessStudyMove } from 'src/lib/storage';
 
-const chunkArray = <T,>(array: T[], chunkSize: number) => {
+const chunkArray = <T,>(array: T[], chunkSize: number, offsetByOne: boolean = false) => {
 	return array.reduce((resultArray, item, index) => {
-		const chunkIndex = Math.floor(index / chunkSize);
+		const chunkIndex = Math.floor((index + ((offsetByOne) ? 1 : 0)) / chunkSize);
 
 		if (!resultArray[chunkIndex]) {
 			resultArray[chunkIndex] = [];
@@ -108,21 +108,27 @@ export const PgnViewer = React.memo(
 	({
 		history,
 		currentMoveId,
+		firstPlayer,
+		initialMoveNumber,
 		onUndoButtonClick,
 		onBackButtonClick,
 		onForwardButtonClick,
 		onMoveItemClick,
 		onSaveButtonClick,
+		onCopyButtonClick,
 	}: {
 		history: ChessStudyMove[];
 		currentMoveId: string;
+		firstPlayer: string;
+		initialMoveNumber: number;
 		onUndoButtonClick: () => void;
 		onBackButtonClick: () => void;
 		onForwardButtonClick: () => void;
 		onMoveItemClick: (moveId: string) => void;
 		onSaveButtonClick: () => void;
+		onCopyButtonClick: () => void;
 	}) => {
-		const movePairs = useMemo(() => chunkArray(history, 2), [history]);
+		const movePairs = useMemo(() => chunkArray(history, 2, firstPlayer === 'b'), [history]);
 
 		return (
 			<div className="height-width-100">
@@ -134,8 +140,15 @@ export const PgnViewer = React.memo(
 							return (
 								<React.Fragment key={wMove.san + bMove?.san + currentMoveIndex}>
 									<p className="move-indicator center">
-										{currentMoveIndex + 1}
+										{currentMoveIndex + initialMoveNumber}
 									</p>
+									{(firstPlayer === 'b' && bMove === undefined && currentMoveIndex === 0) && (
+										<MoveItem
+											san={'...'}
+											isCurrentMove={false}
+											onMoveItemClick={() => {}}
+										/>
+									)}
 									<MoveItem
 										san={wMove.san}
 										isCurrentMove={wMove.moveId === currentMoveId}
@@ -177,11 +190,20 @@ export const PgnViewer = React.memo(
 																					}
 																					moveIndicator={
 																						(wMoveVarianti === 0 &&
+																						 (firstPlayer === 'w'
+																								|| currentMoveIndex > 0) &&
 																							`${
 																								currentMoveIndex +
-																								1 +
+																								initialMoveNumber +
 																								wMoveVarianti
 																							}... `) ||
+																						(firstPlayer === 'b' &&
+																						 currentMoveIndex === 0 &&
+																							`${
+																								currentMoveIndex +
+																								initialMoveNumber +
+																								wMoveVarianti
+																							}. `) ||
 																						null
 																					}
 																				/>
@@ -195,13 +217,14 @@ export const PgnViewer = React.memo(
 																							onMoveItemClick(wMove.moveId)
 																						}
 																						moveIndicator={
-																							(wMoveVarianti % 2 === 0 &&
-																								null) ||
-																							`${
-																								currentMoveIndex +
-																								2 +
-																								wMoveVarianti
-																							}. `
+																							((firstPlayer === 'w' ||
+																							  currentMoveIndex > 0) &&
+																								`${
+																									currentMoveIndex +
+																									initialMoveNumber + 1 +
+																									wMoveVarianti
+																								}. `) ||
+																							null
 																						}
 																					/>
 																				)}
@@ -238,9 +261,13 @@ export const PgnViewer = React.memo(
 																					onMoveItemClick={() =>
 																						onMoveItemClick(wMove.moveId)
 																					}
-																					moveIndicator={`${
-																						currentMoveIndex + 2 + bMoveVarianti
-																					}. `}
+																					moveIndicator={
+																						`${
+																							currentMoveIndex
+																							+ initialMoveNumber + 1
+																							+ bMoveVarianti
+																						}. `
+																					}
 																				/>
 																				{bMove && (
 																					<VariantMoveItem
@@ -283,6 +310,9 @@ export const PgnViewer = React.memo(
 				<div className="button-section">
 					<button onClick={() => onSaveButtonClick()}>
 						<Save strokeWidth={'1px'} />
+					</button>
+					<button onClick={() => onCopyButtonClick()}>
+						<Copy strokeWidth={'1px'} />
 					</button>
 				</div>
 			</div>

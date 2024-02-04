@@ -56,15 +56,19 @@ export const ChessStudy = ({
 	dataAdapter,
 }: AppProps) => {
 	// Parse Obsidian / Code Block Settings
-	const { boardColor, boardOrientation, viewComments, chessStudyId } =
+	const { boardColor, boardOrientation, fen, viewComments, chessStudyId } =
+
 		parseUserConfig(pluginSettings, source);
 
 	// Setup Chessground API
 	const [chessView, setChessView] = useState<Api | null>(null);
 
 	// Setup Chess.js API
-	const initialChessLogic = useMemo(() => {
-		const chess = new Chess();
+	const [firstPlayer, initialMoveNumber, initialChessLogic] = useMemo(() => {
+		const chess = (fen) ? new Chess(fen) : new Chess();
+
+		const firstPlayer = chess.turn();
+		const initialMoveNumber = chess.moveNumber();
 
 		chessStudyData.moves.forEach((move) => {
 			chess.move({
@@ -73,7 +77,8 @@ export const ChessStudy = ({
 				promotion: move.promotion,
 			});
 		});
-		return chess;
+
+		return [firstPlayer, initialMoveNumber, chess];
 	}, [chessStudyData.moves]);
 
 	const [chessLogic, setChessLogic] = useState(initialChessLogic);
@@ -312,6 +317,9 @@ export const ChessStudy = ({
 					<PgnViewer
 						history={gameState.study.moves}
 						currentMoveId={gameState.currentMove?.moveId}
+
+						firstPlayer={firstPlayer}
+						initialMoveNumber={initialMoveNumber}
 						onUndoButtonClick={() =>
 							dispatch({ type: 'REMOVE_LAST_MOVE_FROM_HISTORY' })
 						}
@@ -328,6 +336,14 @@ export const ChessStudy = ({
 							})
 						}
 						onSaveButtonClick={onSaveButtonClick}
+						onCopyButtonClick={() => {
+							try {
+								navigator.clipboard.writeText(chessLogic.fen())
+								new Notice('Copied to clipboard!');
+							} catch (e) {
+								new Notice('Could not copy to clipboard:', e);
+							}
+						}}
 					/>
 				</div>
 			</div>
