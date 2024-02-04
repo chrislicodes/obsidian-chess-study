@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight, Save } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Save, Undo2 } from 'lucide-react';
 import * as React from 'react';
 import { ReactNode, useEffect, useMemo, useRef } from 'react';
 import { ChessStudyMove } from 'src/lib/storage';
@@ -108,6 +108,7 @@ export const PgnViewer = React.memo(
 	({
 		history,
 		currentMoveId,
+		onUndoButtonClick,
 		onBackButtonClick,
 		onForwardButtonClick,
 		onMoveItemClick,
@@ -115,6 +116,7 @@ export const PgnViewer = React.memo(
 	}: {
 		history: ChessStudyMove[];
 		currentMoveId: string;
+		onUndoButtonClick: () => void;
 		onBackButtonClick: () => void;
 		onForwardButtonClick: () => void;
 		onMoveItemClick: (moveId: string) => void;
@@ -268,12 +270,17 @@ export const PgnViewer = React.memo(
 					</div>
 				</div>
 				<div className="button-section">
+					<button onClick={() => onUndoButtonClick()}>
+						<Undo2 />
+					</button>
 					<button onClick={() => onBackButtonClick()}>
 						<ArrowLeft />
 					</button>
 					<button onClick={() => onForwardButtonClick()}>
 						<ArrowRight />
 					</button>
+				</div>
+				<div className="button-section">
 					<button onClick={() => onSaveButtonClick()}>
 						<Save strokeWidth={'1px'} />
 					</button>

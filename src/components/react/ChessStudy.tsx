@@ -42,6 +42,7 @@ export interface GameState {
 
 export type GameActions =
 	| { type: 'ADD_MOVE_TO_HISTORY'; move: Move }
+	| { type: 'REMOVE_LAST_MOVE_FROM_HISTORY' }
 	| { type: 'DISPLAY_NEXT_MOVE_IN_HISTORY' }
 	| { type: 'DISPLAY_PREVIOUS_MOVE_IN_HISTORY' }
 	| { type: 'DISPLAY_SELECTED_MOVE_IN_HISTORY'; moveId: string }
@@ -81,7 +82,7 @@ export const ChessStudy = ({
 		(draft, action) => {
 			switch (action.type) {
 				case 'DISPLAY_NEXT_MOVE_IN_HISTORY': {
-					if (!chessView) return draft;
+					if (!chessView || !draft || draft.study.moves.length == 0) return draft;
 
 					displayMoveInHistory(draft, chessView, setChessLogic, {
 						offset: 1,
@@ -91,7 +92,7 @@ export const ChessStudy = ({
 					return draft;
 				}
 				case 'DISPLAY_PREVIOUS_MOVE_IN_HISTORY': {
-					if (!chessView) return draft;
+					if (!chessView || !draft || draft.study.moves.length == 0) return draft;
 
 					displayMoveInHistory(draft, chessView, setChessLogic, {
 						offset: -1,
@@ -100,8 +101,57 @@ export const ChessStudy = ({
 
 					return draft;
 				}
+				case 'REMOVE_LAST_MOVE_FROM_HISTORY': {
+					if (!chessView || !draft || draft.study.moves.length == 0) return draft;
+
+					let moves = draft.study.moves;
+
+					const currentMoveId = draft.currentMove?.moveId;
+
+					const { variant, moveIndex } = findMoveIndex(moves, currentMoveId);
+
+					if (variant) {
+						const parent = moves[variant.parentMoveIndex];
+						const variantMoves = parent.variants[variant.variantIndex].moves;
+
+						const isLastMove = moveIndex === variantMoves.length - 1;
+
+						if (isLastMove) {
+							displayMoveInHistory(draft, chessView, setChessLogic, {
+								offset: -1,
+								selectedMoveId: currentMoveId,
+							});
+						}
+
+						variantMoves.pop();
+						if (variantMoves.length == 0) {
+							parent.variants.splice(variant.variantIndex, 1);
+						}
+
+						if (isLastMove) {
+							draft.currentMove = (variantMoves.length > 0) ? variantMoves[variantMoves.length - 1] : moves[variant.parentMoveIndex];
+						}
+					} else {
+						const isLastMove = moveIndex === moves.length - 1;
+
+						if (isLastMove) {
+							displayMoveInHistory(draft, chessView, setChessLogic, {
+								offset: -1,
+								selectedMoveId: currentMoveId,
+							});
+						}
+
+						moves.pop();
+
+						if (isLastMove) {
+							draft.currentMove = (moves.length > 0) ? moves[moves.length - 1] : null;
+						}
+					}
+
+					return draft;
+				}
 				case 'DISPLAY_SELECTED_MOVE_IN_HISTORY': {
-					if (!chessView) return draft;
+					if (!chessView || !draft || draft.study.moves.length == 0) return draft;
 
 					const selectedMoveId = action.moveId;
 
@@ -113,6 +163,8 @@ export const ChessStudy = ({
 					return draft;
 				}
 				case 'SYNC_SHAPES': {
+					if (!chessView || !draft || draft.study.moves.length == 0) return draft;
+
 					const move = getCurrentMove(draft);
 
 					move.shapes = action.shapes;
@@ -121,6 +173,8 @@ export const ChessStudy = ({
 					return draft;
 				}
 				case 'SYNC_COMMENT': {
+					if (!chessView || !draft || draft.study.moves.length == 0) return draft;
+
 					const move = getCurrentMove(draft);
 
 					move.comment = action.comment;
@@ -258,6 +312,9 @@ export const ChessStudy = ({
 					<PgnViewer
 						history={gameState.study.moves}
 						currentMoveId={gameState.currentMove?.moveId}
+						onUndoButtonClick={() =>
+							dispatch({ type: 'REMOVE_LAST_MOVE_FROM_HISTORY' })
+						}
 						onBackButtonClick={() =>
 							dispatch({ type: 'DISPLAY_PREVIOUS_MOVE_IN_HISTORY' })
 						}
