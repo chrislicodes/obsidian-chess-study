@@ -4,14 +4,12 @@ import ChessStudyPlugin from 'src/main';
 export interface ChessStudyPluginSettings {
 	boardOrientation: 'white' | 'black';
 	boardColor: 'green' | 'brown';
-	fen: string;
 	viewComments: true | false;
 }
 
 export const DEFAULT_SETTINGS: ChessStudyPluginSettings = {
 	boardOrientation: 'white',
 	boardColor: 'green',
-	fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
 	viewComments: true,
 };
 
@@ -38,9 +36,7 @@ export class SettingsTab extends PluginSettingTab {
 				dropdown
 					.setValue(this.plugin.settings.boardOrientation)
 					.onChange((orientation) => {
-						this.plugin.settings.boardOrientation = orientation as
-							| 'white'
-							| 'black';
+						this.plugin.settings.boardOrientation = orientation as 'white' | 'black';
 						this.plugin.saveSettings();
 					});
 			});
@@ -61,31 +57,17 @@ export class SettingsTab extends PluginSettingTab {
 			});
 
 		new Setting(containerEl)
-			.setName('FEN')
-			.setDesc('Sets the default board position')
-			.addText((text) => {
-				text
-					.setValue(this.plugin.settings.fen)
-					.onChange((fen) => {
-						this.plugin.settings.fen = fen as string;
-						this.plugin.saveSettings();
-					});
-			});
-
-		new Setting(containerEl)
 			.setName('View Comments')
 			.setDesc('Sets the default view of the comments')
 			.addDropdown((dropdown) => {
 				dropdown.addOption('true', 'True');
 				dropdown.addOption('false', 'False');
-
 				dropdown
-					.setValue(this.plugin.settings.viewComments)
+					.setValue(this.plugin.settings.viewComments.toString())
 					.onChange((viewComments) => {
-						this.plugin.settings.viewComments = (viewComments == true || viewComments == "true" || viewComments == "True") as true | false;
+						this.plugin.settings.viewComments = viewComments === 'true';
 						this.plugin.saveSettings();
 					});
 			});
-
 	}
 }

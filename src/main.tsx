@@ -6,7 +6,7 @@ import {
 	ChessStudyFileData,
 } from 'src/lib/storage';
 import { ReactView } from './components/ReactView';
-import { PgnModal } from './components/obsidian/PgnModal';
+import { ChessStringModal } from './components/obsidian/ChessStringModal';
 import {
 	ChessStudyPluginSettings,
 	DEFAULT_SETTINGS,
@@ -21,6 +21,17 @@ import 'chessground/assets/chessground.cburnett.css';
 import { nanoid } from 'nanoid';
 import { parseUserConfig } from './lib/obsidian';
 import './main.css';
+
+type FEN = string;
+type PGN = string;
+export type ChessString = FEN | PGN;
+
+export const ROOT_FEN =
+	'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+
+// TODO:
+// 1) Allow to show the root position
+// 2) Display correct move after removing the last move
 
 export default class ChessStudyPlugin extends Plugin {
 	settings: ChessStudyPluginSettings;
@@ -39,7 +50,7 @@ export default class ChessStudyPlugin extends Plugin {
 			this.storagePath
 		);
 
-		this.dataAdapter.createStorageFolderIfNotExists();
+		await this.dataAdapter.createStorageFolderIfNotExists();
 
 		// Add settings tab
 		this.addSettingTab(new SettingsTab(this.app, this));
@@ -51,22 +62,17 @@ export default class ChessStudyPlugin extends Plugin {
 			editorCallback: (editor: Editor) => {
 				const cursorPosition = editor.getCursor();
 
-				const onSubmit = async (pgn_or_fen: string) => {
+				const onSubmit = async (chessString: ChessString | undefined) => {
 					try {
-						let pgn = '', fen = '';
-						if (pgn_or_fen) {
-							if (pgn_or_fen.includes('/')) {
-								fen = pgn_or_fen.trim();
-							} else {
-								pgn = pgn_or_fen.trim();
-							}
-						}
+						const chessStringTrimmed = chessString?.trim() ?? '';
 
-						const chess = (fen) ? new Chess(fen) : new Chess();
+						const isFen = chessStringTrimmed.includes('/');
 
-						if (pgn) {
+						const chess = isFen ? new Chess(chessStringTrimmed) : new Chess();
+
+						if (!isFen) {
 							//Try to parse the PGN
-							chess.loadPgn(pgn, {
+							chess.loadPgn(chessStringTrimmed, {
 								strict: false,
 							});
 						}
@@ -83,18 +89,15 @@ export default class ChessStudyPlugin extends Plugin {
 								shapes: [],
 								comment: null,
 							})),
+							rootFEN: isFen ? chessStringTrimmed : ROOT_FEN,
 						};
 
 						this.dataAdapter.createStorageFolderIfNotExists();
 
 						const id = await this.dataAdapter.saveFile(chessStudyFileData);
 
-						const blockStr = (fen)
-							? `\`\`\`chessStudy\nchessStudyId: ${id}\nfen: ${fen}\n\`\`\``
-							: `\`\`\`chessStudy\nchessStudyId: ${id}\n\`\`\``;
-
 						editor.replaceRange(
-							blockStr,
+							`\`\`\`chessStudy\nchessStudyId: ${id}\n\`\`\``,
 							cursorPosition
 						);
 					} catch (e) {
@@ -103,7 +106,7 @@ export default class ChessStudyPlugin extends Plugin {
 					}
 				};
 
-				new PgnModal(this.app, onSubmit).open();
+				new ChessStringModal(this.app, onSubmit).open();
 			},
 		});
 
@@ -123,14 +126,7 @@ export default class ChessStudyPlugin extends Plugin {
 					const data = await this.dataAdapter.loadFile(chessStudyId);
 
 					ctx.addChild(
-						new ReactView(
-							el,
-							source,
-							this.app,
-							this.settings,
-							data,
-							this.dataAdapter
-						)
+						new ReactView(el, source, this.app, this.settings, data, this.dataAdapter)
 					);
 				} catch (e) {
 					new Notice(

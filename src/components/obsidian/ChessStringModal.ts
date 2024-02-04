@@ -1,7 +1,8 @@
 import { App, Modal, Setting } from 'obsidian';
+import { ChessString } from 'src/main';
 
-export class PgnModal extends Modal {
-	pgn: string;
+export class ChessStringModal extends Modal {
+	chessString: ChessString;
 	onSubmit: (pgn: string) => void;
 
 	constructor(app: App, onSubmit: (pgn: string) => void) {
@@ -13,13 +14,13 @@ export class PgnModal extends Modal {
 		const { contentEl } = this;
 
 		contentEl.createEl('h1', {
-			text: 'Paste the full PGN (leave empty for a new game):',
+			text: 'Paste the full PGN/FEN (leave empty for a new game):',
 		});
 
-		new Setting(contentEl).setName('PGN').addTextArea((text) =>
+		new Setting(contentEl).setName('PGN/FEN').addTextArea((text) =>
 			text
 				.onChange((value) => {
-					this.pgn = value;
+					this.chessString = value;
 				})
 				.inputEl.setCssStyles({ width: '100%', height: '250px' })
 		);
@@ -30,7 +31,7 @@ export class PgnModal extends Modal {
 				.setCta()
 				.onClick(() => {
 					this.close();
-					this.onSubmit(this.pgn);
+					this.onSubmit(this.chessString);
 				})
 		);
 	}
