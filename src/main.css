@@ -87,7 +87,7 @@
 	align-items: center;
 	width: 100%;
 	gap: 4px;
-	height: 35px;
+	height: 32px;
 }
 
 /* Move Items */
@@ -95,10 +95,14 @@
 .chess-study .move-item-container {
 	display: grid;
 	grid-template-columns: 0.15fr 0.425fr 0.425fr;
-	grid-auto-rows: minmax(30px, auto);
+	grid-auto-rows: minmax(35px, auto);
 	width: 100%;
 	max-height: 380px;
 	overflow-y: scroll;
+}
+
+.chess-study .move-item-container > * {
+	margin: 0;
 }
 
 .chess-study .move-item {
@@ -107,11 +111,7 @@
 }
 
 .chess-study .move-item:hover {
-	background-color: hsl(
-		var(--accent-h),
-		var(--accent-s),
-		calc(var(--accent-l))
-	);
+	background-color: hsl(var(--accent-h), var(--accent-s), calc(var(--accent-l)));
 	color: var(--text-on-accent);
 	cursor: pointer;
 }

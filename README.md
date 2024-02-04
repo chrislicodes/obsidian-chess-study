@@ -12,8 +12,9 @@ With this plugin, you can either import PGNs or simply start a fresh new game. I
 - [Installation](#installation)
 - [Usage](#usage)
 - [Features](#features)
-	- [1.0.0](#100)
-	- [1.1.0](#110)
+ 	- [1.0.0](#100)
+ 	- [1.1.0](#110)
+ 	- [1.2.0](#120)
 - [Settings](#settings)
 - [Roadmap](#roadmap)
 - [Tools Used](#tools-used)
@@ -62,6 +63,14 @@ After that the PGN viewer/editor will render and you are good to go (styles are 
 
 ![chess-study-variants](imgs/chess-study-variants.png)
 
+### 1.2.0
+
+- [x] Add FEN start position support
+- [x] Add undo button
+- [x] Copy current FEN string to clipboard
+
+Thanks to @latenitecoding for the contributions
+
 ## Settings
 
 Here are the available settings for a `chessStudy` code block:
@@ -71,19 +80,17 @@ Here are the available settings for a `chessStudy` code block:
 | `chessStudyId`     | Valid nanoid       | Valid ID for a file stored in the plugin storage |
 | `boardOrientation` | `white` \| `black` | Orientation of the board                         |
 | `boardColor`       | `green` \| `brown` | Color of the board                               |
-| `fen`              | Valid FEN string   | FEN string                                       |
 | `viewComments`     | `true`  \| `false` | Whether to display the comments section          |
 
 You can permanently set some settings in the [Obsidian](https://obsidian.md/) plugin settings for Obsidian Chess Study.
 
 ## Roadmap
 
-- [ ] Add option to export current FEN
-- [ ] Add option to start from a specific position (FEN)
-- [ ] Add undo button
 - [ ] Add view to manage stored games
 - [ ] Add more styles
 - [ ] Add more settings
+- [ ] Support canvas view
+- [ ] Mobile support
 
 ## Tools Used
 
