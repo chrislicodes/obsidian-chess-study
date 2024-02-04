@@ -4,11 +4,13 @@ import ChessStudyPlugin from 'src/main';
 export interface ChessStudyPluginSettings {
 	boardOrientation: 'white' | 'black';
 	boardColor: 'green' | 'brown';
+	viewComments: true | false;
 }
 
 export const DEFAULT_SETTINGS: ChessStudyPluginSettings = {
 	boardOrientation: 'white',
 	boardColor: 'green',
+	viewComments: true,
 };
 
 export class SettingsTab extends PluginSettingTab {
@@ -55,5 +57,21 @@ export class SettingsTab extends PluginSettingTab {
 						this.plugin.saveSettings();
 					});
 			});
+
+		new Setting(containerEl)
+			.setName('View Comments')
+			.setDesc('Sets the default view of the comments')
+			.addDropdown((dropdown) => {
+				dropdown.addOption('true', 'True');
+				dropdown.addOption('false', 'False');
+
+				dropdown
+					.setValue(this.plugin.settings.viewComments)
+					.onChange((viewComments) => {
+						this.plugin.settings.viewComments = (viewComments == true || viewComments == "true" || viewComments == "True") as true | false;
+						this.plugin.saveSettings();
+					});
+			});
+
 	}
 }
