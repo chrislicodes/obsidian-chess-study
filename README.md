@@ -69,7 +69,7 @@ After that the PGN viewer/editor will render and you are good to go (styles are 
 - [x] Add undo button
 - [x] Copy current FEN string to clipboard
 
-Thanks to @latenitecoding for the contributions
+Thanks to [@latenitecoding](https://github.com/latenitecoding) for the contributions
 
 ## Settings
 
