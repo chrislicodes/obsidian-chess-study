@@ -1,3 +1,5 @@
+> ‼️ Now continued as [obsidian-chess-repertoire](https://github.com/moise-dev/obsidian-chess-repertoire) - ♟️
+
 <!-- omit in toc -->
 # Obsidian Chess Study
 
